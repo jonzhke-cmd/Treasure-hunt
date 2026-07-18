@@ -423,7 +423,32 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
 }
 
 @media(max-width:380px){.quiz-grid{grid-template-columns:1fr}}
+
+/* ── QR SCANNER SCREEN ── */
+#screen-scanner{padding:24px 16px 40px;text-align:center;}
+.scanner-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--dark);margin-bottom:6px;}
+.scanner-sub{font-size:0.88rem;font-weight:700;color:#888;margin-bottom:18px;max-width:320px;margin-left:auto;margin-right:auto;}
+.cam-wrap{width:100%;max-width:300px;aspect-ratio:1;border:4px solid var(--dark);border-radius:22px;overflow:hidden;background:#000;margin:0 auto 16px;box-shadow:5px 5px 0 var(--dark);position:relative;}
+#qr-video{width:100%;height:100%;object-fit:cover;display:block;}
+.cam-corner{position:absolute;width:28px;height:28px;border-color:var(--yellow);border-style:solid;}
+.cam-tl{top:10px;left:10px;border-width:4px 0 0 4px;}
+.cam-tr{top:10px;right:10px;border-width:4px 4px 0 0;}
+.cam-bl{bottom:10px;left:10px;border-width:0 0 4px 4px;}
+.cam-br{bottom:10px;right:10px;border-width:0 4px 4px 0;}
+.cam-line{position:absolute;left:10px;right:10px;height:3px;background:linear-gradient(90deg,transparent,var(--yellow),transparent);animation:camScan 2s ease-in-out infinite;}
+@keyframes camScan{0%,100%{top:15%}50%{top:78%}}
+.scan-status{background:white;border:3px solid var(--dark);border-radius:14px;padding:12px 16px;max-width:320px;width:100%;margin:0 auto 14px;font-weight:800;font-size:0.92rem;box-shadow:3px 3px 0 var(--dark);}
+.scan-status.scan-ok{background:#DCFCE7;border-color:#16A34A;color:#15803D;}
+.scan-status.scan-err{background:#FEE2E2;border-color:var(--red);color:var(--red);}
+.manual-section{max-width:320px;width:100%;margin:0 auto;}
+.or-divider{display:flex;align-items:center;gap:8px;color:#ccc;font-size:0.75rem;font-weight:800;margin:10px 0;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:#E5E7EB;}
+.code-input{width:100%;padding:13px;border:3px solid var(--dark);border-radius:12px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;text-align:center;text-transform:uppercase;letter-spacing:2px;outline:none;}
+.submit-code-btn{width:100%;margin-top:8px;padding:14px;background:var(--dark);color:white;border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:1.1rem;cursor:pointer;box-shadow:0 3px 0 #000;touch-action:manipulation;}
+.cancel-scan-btn{background:none;border:2px solid #E5E7EB;border-radius:10px;padding:10px 20px;font-size:0.85rem;font-weight:800;color:#aaa;cursor:pointer;margin-top:10px;touch-action:manipulation;}
+
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 </head>
 <body>
 
@@ -509,6 +534,29 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
     <div class="progress-fill" id="progressFill2" style="width:0%"></div>
   </div>
   <div class="ch-card" id="chCard"></div>
+</div>
+
+
+<!-- ══════════ QR SCANNER ══════════ -->
+<div class="screen" id="screen-scanner">
+  <div class="ch-breadcrumb" id="scanBread" style="margin-bottom:10px;color:#888;font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:1px"></div>
+  <div class="scanner-title" id="scanTitle">Scan to Unlock!</div>
+  <div class="scanner-sub" id="scanSub">Ask your teacher to show you the QR code after completing the challenge!</div>
+  <div class="cam-wrap">
+    <video id="qr-video" autoplay playsinline muted></video>
+    <div class="cam-corner cam-tl"></div>
+    <div class="cam-corner cam-tr"></div>
+    <div class="cam-corner cam-bl"></div>
+    <div class="cam-corner cam-br"></div>
+    <div class="cam-line"></div>
+  </div>
+  <div class="scan-status" id="scanStatus">📸 Point camera at the QR code</div>
+  <div class="manual-section">
+    <div class="or-divider">or type the code your teacher gives you</div>
+    <input class="code-input" id="codeInput" type="text" placeholder="e.g. NPN-A1-LOVE" maxlength="20"/>
+    <button class="submit-code-btn" onclick="submitCode()">Unlock Station ➜</button>
+  </div>
+  <button class="cancel-scan-btn" onclick="showZone()">← Back to Map</button>
 </div>
 
 <!-- ══════════ FINISH ══════════ -->
@@ -719,7 +767,7 @@ function startGame(){
 // ─────────────────────────────────────────────
 //  ZONE HUB
 // ─────────────────────────────────────────────
-function showZone(){
+function showZone(){ stopCam();
   const zd=ZONES[S.zone];
   // Header
   const hdr=document.getElementById('zoneHeader');
@@ -770,10 +818,14 @@ function renderStations(zd){
 //  OPEN STATION
 // ─────────────────────────────────────────────
 function openStation(idx){
+  stopCam();
   S.cur=idx;
   const zd=ZONES[S.zone];
   const st=zd.stations[idx];
   const done=S.done.includes(idx);
+  // If lego station and not done, go straight to scanner (QR is on figurine back)
+  if(st.type==='lego' && !done){ openScanner(idx, true); return; }
+  // If already done, just show completed view
   document.getElementById('chBread').textContent=`${zd.icon} ${zd.name} · Station ${idx+1}`;
   const p2=document.getElementById('progressFill2');
   p2.style.width=((S.done.length/6)*100)+'%';
@@ -817,7 +869,7 @@ function openStation(idx){
         </div>
         ${done
           ?`<button class="cta-btn" style="background:#16A34A" disabled>✅ Challenge Done!</button>`
-          :`<button class="cta-btn" style="background:${zd.color}" onclick="completeAction()">I Did It! 🎉</button>`
+          :`<button class="cta-btn" style="background:${zd.color}" onclick="openScanner(${idx},false)">Done! Scan Teacher QR 📱</button>`
         }
       </div>`;
 
@@ -877,13 +929,13 @@ function handleQuiz(sel,correct){
   });
   const st=ZONES[S.zone].stations[S.cur];
   if(sel===correct){
-    showModal(true,'🎉 Correct!','Amazing! You got it right!',()=>complete(st.points));
+    showModal(true,'🎉 Correct!','Amazing! Now scan your teacher\'s QR to unlock!',()=>openScanner(S.cur,false));
   } else {
-    showModal(false,'😅 Oops!','Wrong answer — but great try! Keep going!',()=>complete(Math.floor(st.points/2)));
+    showModal(false,'😅 Oops!','Wrong answer — but keep going! Scan teacher\'s QR to continue.',()=>openScanner(S.cur,false));
   }
 }
 
-function completeAction(){ complete(ZONES[S.zone].stations[S.cur].points); }
+function completeAction(){ openScanner(S.cur,false); } // kept for safety
 
 function previewLegoPhoto(input){
   if(input.files&&input.files[0]){
@@ -1003,6 +1055,107 @@ function showPtBurst(txt){
   el.style.animation='ptFloat 1.6s ease-out forwards';
   setTimeout(()=>el.style.display='none',1700);
 }
+
+// ─────────────────────────────────────────────
+//  STATION CODES
+// ─────────────────────────────────────────────
+const STATION_CODES = {
+  A:['NPN-A1-LOVE','NPN-A2-HUG','NPN-A3-LEGO','NPN-A4-KIND','NPN-A5-SHARE','NPN-A6-LEGO'],
+  B:['NPN-B1-JOKE','NPN-B2-LAUGH','NPN-B3-LEGO','NPN-B4-SILLY','NPN-B5-FACE','NPN-B6-LEGO'],
+  C:['NPN-C1-NATURE','NPN-C2-EXPLORE','NPN-C3-LEGO','NPN-C4-TALENT','NPN-C5-SUPER','NPN-C6-LEGO']
+};
+
+let camStream=null, camInterval=null;
+
+function stopCam(){
+  if(camInterval){clearInterval(camInterval);camInterval=null;}
+  if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
+}
+
+function openScanner(idx, isLego){
+  S.cur = idx;
+  const zd = ZONES[S.zone];
+  const st = zd.stations[idx];
+  document.getElementById('scanBread').textContent = zd.icon+' '+zd.name+' · Station '+(idx+1);
+
+  if(isLego){
+    document.getElementById('scanTitle').textContent = '🧱 Scan the Lego Figure!';
+    document.getElementById('scanSub').textContent = 'Find the hidden Lego figure and scan the QR code stuck on its back!';
+  } else {
+    document.getElementById('scanTitle').textContent = '🏅 Challenge Complete?';
+    document.getElementById('scanSub').textContent = 'Ask your teacher to show you their QR code after finishing the challenge!';
+  }
+
+  document.getElementById('scanStatus').textContent = '📸 Point camera at the QR code';
+  document.getElementById('scanStatus').className = 'scan-status';
+  document.getElementById('codeInput').value = '';
+  show('screen-scanner');
+  startCam();
+}
+
+function startCam(){
+  const video = document.getElementById('qr-video');
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
+    .then(stream => {
+      camStream = stream;
+      video.srcObject = stream;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      camInterval = setInterval(()=>{
+        if(video.readyState===4){
+          canvas.width=video.videoWidth;
+          canvas.height=video.videoHeight;
+          ctx.drawImage(video,0,0);
+          const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+          if(typeof jsQR!=='undefined'){
+            const result=jsQR(img.data,img.width,img.height);
+            if(result) handleCode(result.data);
+          }
+        }
+      },400);
+    })
+    .catch(()=>{
+      document.getElementById('scanStatus').textContent='📷 Camera unavailable — type code below';
+    });
+}
+
+function submitCode(){
+  const v = document.getElementById('codeInput').value.trim();
+  if(!v){alert('Please enter the code!');return;}
+  handleCode(v);
+}
+
+function handleCode(raw){
+  const code = raw.trim().toUpperCase();
+  const expected = STATION_CODES[S.zone][S.cur].toUpperCase();
+  if(code === expected){
+    stopCam();
+    document.getElementById('scanStatus').textContent = '✅ Unlocked! Great work! 🎉';
+    document.getElementById('scanStatus').className = 'scan-status scan-ok';
+    setTimeout(()=>{ completeAndNext(); }, 800);
+  } else {
+    document.getElementById('scanStatus').textContent = '❌ Wrong code — try again!';
+    document.getElementById('scanStatus').className = 'scan-status scan-err';
+    setTimeout(()=>{
+      document.getElementById('scanStatus').textContent = '📸 Point camera at the QR code';
+      document.getElementById('scanStatus').className = 'scan-status';
+    }, 2000);
+  }
+}
+
+function completeAndNext(){
+  const st = ZONES[S.zone].stations[S.cur];
+  if(!S.done.includes(S.cur)){
+    S.done.push(S.cur);
+    S.score += (st.pts || 20);
+    if(st.type==='lego') S.legoFound++;
+    showPtBurst('+'+(st.pts||20)+' '+(st.type==='lego'?'🧱':'⭐'));
+    spawnConf(st.type==='lego'?60:30);
+  }
+  if(S.done.length >= 6){ setTimeout(showFinish, 600); }
+  else { showZone(); }
+}
+
 </script>
 </body>
 </html>
