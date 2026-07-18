@@ -423,7 +423,63 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
 }
 
 @media(max-width:380px){.quiz-grid{grid-template-columns:1fr}}
+
+/* ── QR SCANNER SCREEN ── */
+#screen-scanner {padding:24px 16px;text-align:center;}
+.scanner-header{width:100%;max-width:480px;margin-bottom:20px;}
+.scanner-title{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--dark);margin-bottom:6px;}
+.scanner-sub{font-size:0.9rem;font-weight:700;color:#888;margin-bottom:20px;}
+.scanner-box{
+  width:100%;max-width:360px;aspect-ratio:1;
+  border:4px solid var(--dark);border-radius:24px;
+  overflow:hidden;position:relative;background:#000;
+  box-shadow:6px 6px 0 var(--dark);margin:0 auto 20px;
+}
+#qr-video{width:100%;height:100%;object-fit:cover;}
+.scanner-corner{position:absolute;width:36px;height:36px;border-color:var(--yellow);border-style:solid;}
+.sc-tl{top:12px;left:12px;border-width:4px 0 0 4px;}
+.sc-tr{top:12px;right:12px;border-width:4px 4px 0 0;}
+.sc-bl{bottom:12px;left:12px;border-width:0 0 4px 4px;}
+.sc-br{bottom:12px;right:12px;border-width:0 4px 4px 0;}
+.scan-line{
+  position:absolute;left:12px;right:12px;height:3px;
+  background:linear-gradient(90deg,transparent,var(--yellow),transparent);
+  animation:scanLine 2s ease-in-out infinite;top:20%;
+}
+@keyframes scanLine{0%,100%{top:20%}50%{top:75%}}
+.scanner-status{
+  background:white;border:3px solid var(--dark);border-radius:16px;
+  padding:14px 20px;max-width:360px;width:100%;margin:0 auto 16px;
+  box-shadow:3px 3px 0 var(--dark);font-weight:800;font-size:1rem;
+}
+.scanner-status.success{background:#DCFCE7;border-color:#16A34A;color:#15803D;}
+.scanner-status.error{background:#FEE2E2;border-color:var(--red);color:var(--red);}
+.manual-input-wrap{max-width:360px;width:100%;margin:0 auto;}
+.manual-divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:#aaa;font-size:0.8rem;font-weight:700;}
+.manual-divider::before,.manual-divider::after{content:'';flex:1;height:1px;background:#E5E7EB;}
+.manual-input{
+  width:100%;padding:13px 16px;border:3px solid var(--dark);border-radius:14px;
+  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
+  text-align:center;text-transform:uppercase;letter-spacing:2px;outline:none;
+}
+.manual-input:focus{border-color:var(--yellow);}
+.manual-submit{
+  width:100%;margin-top:10px;padding:14px;
+  background:var(--dark);color:white;border:none;border-radius:14px;
+  font-family:'Fredoka One',cursive;font-size:1.1rem;
+  cursor:pointer;box-shadow:0 3px 0 #000;transition:all 0.15s;
+}
+.manual-submit:hover{transform:translateY(-1px);}
+.cancel-scan{
+  background:none;border:2px solid #E5E7EB;border-radius:12px;
+  padding:10px 24px;font-family:'Nunito',sans-serif;font-size:0.9rem;
+  font-weight:800;color:#888;cursor:pointer;margin-top:10px;
+  transition:all 0.2s;
+}
+.cancel-scan:hover{border-color:var(--dark);color:var(--dark);}
+
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
 </head>
 <body>
 
@@ -467,6 +523,31 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
     <button class="start-btn" onclick="startGame()">Start Hunting! 🚀</button>
   </div>
   <p style="color:rgba(255,255,255,0.7);font-size:0.78rem;font-weight:700;margin-top:16px">Potter's Garden · CleanTech Three · 19 September 2026</p>
+</div>
+
+
+<!-- ══════════ QR SCANNER ══════════ -->
+<div class="screen" id="screen-scanner">
+  <div class="scanner-header">
+    <div class="ch-breadcrumb" id="scannerLabel">Scanning Station</div>
+    <div class="scanner-title">📱 Scan Station QR</div>
+    <div class="scanner-sub">Find the QR code at the station and scan it to begin!</div>
+  </div>
+  <div class="scanner-box">
+    <video id="qr-video" autoplay playsinline muted></video>
+    <div class="scanner-corner sc-tl"></div>
+    <div class="scanner-corner sc-tr"></div>
+    <div class="scanner-corner sc-bl"></div>
+    <div class="scanner-corner sc-br"></div>
+    <div class="scan-line"></div>
+  </div>
+  <div class="scanner-status" id="scannerStatus">🔍 Point camera at the QR code...</div>
+  <div class="manual-input-wrap">
+    <div class="manual-divider">or enter code manually</div>
+    <input class="manual-input" id="manualCode" type="text" placeholder="e.g. NPN-A1-LOVE" maxlength="20"/>
+    <button class="manual-submit" onclick="submitManualCode()">Unlock Station ➜</button>
+  </div>
+  <button class="cancel-scan" onclick="showZone()">← Back to Map</button>
 </div>
 
 <!-- ══════════ ZONE HUB ══════════ -->
@@ -1003,6 +1084,142 @@ function showPtBurst(txt){
   el.style.animation='ptFloat 1.6s ease-out forwards';
   setTimeout(()=>el.style.display='none',1700);
 }
+
+// ─────────────────────────────────────────────
+//  QR SCANNER
+// ─────────────────────────────────────────────
+let scannerStream = null;
+let scannerInterval = null;
+let currentScanStation = 0;
+
+const STATION_CODES = {
+  A:["NPN-A1-LOVE","NPN-A2-HUG","NPN-A3-LEGO","NPN-A4-KIND","NPN-A5-SHARE","NPN-A6-LEGO"],
+  B:["NPN-B1-JOKE","NPN-B2-LAUGH","NPN-B3-LEGO","NPN-B4-SILLY","NPN-B5-FACE","NPN-B6-LEGO"],
+  C:["NPN-C1-NATURE","NPN-C2-EXPLORE","NPN-C3-LEGO","NPN-C4-TALENT","NPN-C5-SUPER","NPN-C6-LEGO"],
+};
+
+function openStation(idx){
+  S.cur = idx;
+  if(S.done.includes(idx)){
+    // Already done — go straight to challenge view
+    launchChallenge(idx);
+    return;
+  }
+  // Require QR scan to unlock
+  startScanner(idx);
+}
+
+function startScanner(idx){
+  currentScanStation = idx;
+  const zd = ZONES[S.zone];
+  document.getElementById('scannerLabel').textContent =
+    zd.icon + ' ' + zd.name + ' · Station ' + (idx+1);
+  document.getElementById('scannerStatus').textContent = '🔍 Point camera at the QR code...';
+  document.getElementById('scannerStatus').className = 'scanner-status';
+  document.getElementById('manualCode').value = '';
+  show('screen-scanner');
+  startCamera();
+}
+
+async function startCamera(){
+  try {
+    scannerStream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'environment',width:{ideal:640},height:{ideal:640}}
+    });
+    const video = document.getElementById('qr-video');
+    video.srcObject = scannerStream;
+    await video.play();
+    startQRDecode(video);
+  } catch(e){
+    document.getElementById('scannerStatus').textContent =
+      '📷 Camera unavailable — enter code manually below';
+    document.getElementById('scannerStatus').className = 'scanner-status error';
+  }
+}
+
+
+function startQRDecode(video){
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  scannerInterval = setInterval(()=>{
+    if(video.readyState === video.HAVE_ENOUGH_DATA){
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video,0,0,canvas.width,canvas.height);
+      const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+      if(typeof jsQR !== 'undefined'){
+        const code = jsQR(imageData.data,imageData.width,imageData.height,{inversionAttempts:'dontInvert'});
+        if(code){ handleScannedCode(code.data); }
+      }
+    }
+  },350);
+}
+
+
+function stopCamera(){
+  if(scannerInterval){ clearInterval(scannerInterval); scannerInterval=null; }
+  if(scannerStream){ scannerStream.getTracks().forEach(t=>t.stop()); scannerStream=null; }
+}
+
+function handleScannedCode(raw){
+  const code = raw.trim().toUpperCase();
+  const expected = STATION_CODES[S.zone][currentScanStation].toUpperCase();
+  if(code === expected){
+    stopCamera();
+    document.getElementById('scannerStatus').textContent = '✅ Station Unlocked!';
+    document.getElementById('scannerStatus').className = 'scanner-status success';
+    spawnConf(20);
+    setTimeout(()=>launchChallenge(currentScanStation), 800);
+  } else {
+    document.getElementById('scannerStatus').textContent = '❌ Wrong QR — find the correct station!';
+    document.getElementById('scannerStatus').className = 'scanner-status error';
+    setTimeout(()=>{
+      document.getElementById('scannerStatus').textContent = '🔍 Point camera at the QR code...';
+      document.getElementById('scannerStatus').className = 'scanner-status';
+    },2000);
+  }
+}
+
+function submitManualCode(){
+  const val = document.getElementById('manualCode').value.trim().toUpperCase();
+  if(!val){ alert('Please enter the code from the station!'); return; }
+  handleScannedCode(val);
+}
+
+// Rename old openStation logic to launchChallenge
+function launchChallenge(idx){
+  stopCamera();
+  S.cur = idx;
+  const zd = ZONES[S.zone];
+  const st = zd.stations[idx];
+  const done = S.done.includes(idx);
+  document.getElementById('chBread').textContent = zd.icon+' '+zd.name+' · Station '+(idx+1);
+  const p2 = document.getElementById('progressFill2');
+  p2.style.width = ((S.done.length/6)*100)+'%';
+  p2.style.background = zd.color;
+  const card = document.getElementById('chCard');
+  card.innerHTML = '';
+  let topStyle = 'background:'+zd.bgGrad;
+  if(st.type==='quiz'){
+    const optsHTML = st.options.map((o,i)=>{
+      let cls='qopt';
+      if(done){cls+=i===st.answer?' correct':' disabled';}
+      return '<button class="'+cls+'" onclick="'+(done?'':'handleQuiz('+i+','+st.answer+')')+'">'+o+'</button>';
+    }).join('');
+    card.innerHTML='<div class="ch-card-top" style="'+topStyle+'"><div class="ch-emoji">'+st.emoji+'</div><div class="ch-type-tag">Quiz Challenge</div><div class="ch-question">'+st.question+'</div></div><div class="ch-body"><div class="quiz-grid">'+optsHTML+'</div>'+(st.hint?'<div class="hint-row"><button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button></div><div class="hint-box">'+st.hint+'</div>':'')+'</div>';
+  } else if(st.type==='action'){
+    card.innerHTML='<div class="ch-card-top" style="'+topStyle+'"><div class="ch-emoji">'+st.emoji+'</div><div class="ch-type-tag">Action Challenge</div><div class="ch-question">'+st.question+'</div></div><div class="ch-body"><div class="action-steps">'+st.steps.map((s,i)=>'<div class="astep"><div class="astep-n">'+(i+1)+'</div><div>'+s+'</div></div>').join('')+'</div>'+(done?'<button class="cta-btn" style="background:#16A34A" disabled>✅ Challenge Done!</button>':'<button class="cta-btn" style="background:'+zd.color+'" onclick="completeAction()">I Did It! 🎉</button>')+'</div>';
+  } else if(st.type==='lego'){
+    const fig=LEGO_FIGURES[S.zone].find(f=>f.id===st.legoId);
+    const hasImg=fig&&fig.src&&fig.src.length>0;
+    card.innerHTML='<div class="ch-card-top" style="'+topStyle+'"><div class="ch-emoji">🧱</div><div class="ch-type-tag">🧱 Lego Hunt · Piece #'+(fig?fig.pieceNum:'?')+'</div><div class="ch-question">Find the hidden Lego figure!</div></div><div class="ch-body"><div class="lego-find-wrap"><div class="lego-figure-display">'+(hasImg?'<img src="'+fig.src+'" alt="'+fig.name+'" style="width:100%;max-height:260px;object-fit:contain;padding:12px"/>':'<div class="lego-placeholder"><div class="lp-icon">'+(fig?fig.emoji:'🧱')+'</div><div class="lp-name">'+(fig?fig.name:'Lego Figure')+'</div><div class="lp-hint">📷 Upload the Lego figure photo here</div></div>')+'</div><div class="find-clue"><div class="find-clue-label">🗺️ Where to Find It</div><div class="find-clue-text">'+(fig?fig.clue:'Look around carefully!')+'</div></div><div style="font-size:0.8rem;font-weight:700;color:#888;margin-bottom:12px">📍 '+(fig?fig.hiddenAt:'Check with your teacher!')+'</div>'+(done?'<div style="font-size:2.5rem;margin-bottom:8px">🧱✅</div><p style="color:#16A34A;font-weight:800;font-size:0.95rem;margin-bottom:12px">Lego piece found & collected!</p><button class="cta-btn" style="background:#16A34A" disabled>✅ Piece Collected!</button>':'<label class="photo-upload-zone" for="legoPhoto"><div class="pu-icon">📸</div><div class="pu-text">Take a photo WITH the Lego figure!</div><img id="legoPreview"/></label><input type="file" id="legoPhoto" accept="image/*" capture="environment" style="display:none" onchange="previewLegoPhoto(this)"/><button class="cta-btn" style="background:'+zd.color+'" onclick="collectLego()">I Found It! 🧱🎉</button>')+'</div></div>';
+  }
+  show('screen-challenge');
+}
+
+// Override showZone to also stop camera
+const _origShowZone = showZone;
+
 </script>
 </body>
 </html>
