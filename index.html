@@ -515,12 +515,30 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
     <div class="field-label">Your Name</div>
     <input class="name-input" id="playerName" type="text" placeholder="Type your name here 😊" maxlength="20"/>
     <div class="field-label">Choose Your Zone</div>
-    <div class="zone-row">
-      <button class="zone-pick" id="zp-A" onclick="pickZone('A')">❤️<br>Zone A<br><small>LOVE</small></button>
-      <button class="zone-pick" id="zp-B" onclick="pickZone('B')">😄<br>Zone B<br><small>LAUGH</small></button>
-      <button class="zone-pick" id="zp-C" onclick="pickZone('C')">🌿<br>Zone C<br><small>EXPLORE</small></button>
+    <div style="display:flex;gap:10px;margin-top:6px;width:100%">
+      <div id="zp-A" ontouchstart="pickZone('A')" onclick="pickZone('A')"
+        style="flex:1;padding:14px 6px;border-radius:14px;border:3px solid #E8312A;
+        background:#E8312A;color:white;font-family:Fredoka One,cursive;font-size:0.95rem;
+        text-align:center;cursor:pointer;box-shadow:0 4px 0 #8B0000;
+        -webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation">
+        ❤️<br>Zone A<br><small style="opacity:0.9">LOVE</small>
+      </div>
+      <div id="zp-B" ontouchstart="pickZone('B')" onclick="pickZone('B')"
+        style="flex:1;padding:14px 6px;border-radius:14px;border:3px solid #ccc;
+        background:white;color:#333;font-family:Fredoka One,cursive;font-size:0.95rem;
+        text-align:center;cursor:pointer;box-shadow:0 4px 0 #ccc;
+        -webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation">
+        😄<br>Zone B<br><small style="opacity:0.7">LAUGH</small>
+      </div>
+      <div id="zp-C" ontouchstart="pickZone('C')" onclick="pickZone('C')"
+        style="flex:1;padding:14px 6px;border-radius:14px;border:3px solid #ccc;
+        background:white;color:#333;font-family:Fredoka One,cursive;font-size:0.95rem;
+        text-align:center;cursor:pointer;box-shadow:0 4px 0 #ccc;
+        -webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation">
+        🌿<br>Zone C<br><small style="opacity:0.7">EXPLORE</small>
+      </div>
     </div>
-    <button class="start-btn" onclick="startGame()">Start Hunting! 🚀</button>
+    <button class="start-btn" onclick="startGame()" style="touch-action:manipulation">Start Hunting! 🚀</button>
   </div>
   <p style="color:rgba(255,255,255,0.7);font-size:0.78rem;font-weight:700;margin-top:16px">Potter's Garden · CleanTech Three · 19 September 2026</p>
 </div>
@@ -783,24 +801,37 @@ function show(id){
 }
 
 function pickZone(z){
-  S.zone=z;
-  document.querySelectorAll('.zone-pick').forEach(b=>{
-    b.className='zone-pick';
+  S.zone = z;
+  var zones = ['A','B','C'];
+  var colors = {A:'#E8312A', B:'#FF8C00', C:'#00A850'};
+  var shadows = {A:'#8B0000', B:'#8B4500', C:'#004D25'};
+  zones.forEach(function(id){
+    var el = document.getElementById('zp-'+id);
+    if(!el) return;
+    if(id === z){
+      el.style.background = colors[id];
+      el.style.borderColor = colors[id];
+      el.style.color = 'white';
+      el.style.boxShadow = '0 4px 0 '+shadows[id];
+      el.style.transform = 'translateY(-2px)';
+    } else {
+      el.style.background = 'white';
+      el.style.borderColor = '#ccc';
+      el.style.color = '#333';
+      el.style.boxShadow = '0 4px 0 #ccc';
+      el.style.transform = 'none';
+    }
   });
-  const btn=document.getElementById('zp-'+z);
-  if(btn) btn.classList.add('sel-'+z.toLowerCase());
 }
 
 function startGame(){
-  const n=document.getElementById('playerName').value.trim();
-  if(!n){alert('Please enter your name! 😊');return;}
-  if(!S.zone){alert('Please pick your zone!');return;}
-  S.name=n; S.done=[]; S.score=0; S.legoFound=0;
+  var n = document.getElementById('playerName').value.trim();
+  if(!n){ alert('Please enter your name! 😊'); return; }
+  S.name = n; S.done = []; S.score = 0; S.legoFound = 0;
   showZone();
 }
 
-// Pre-select Zone A on page load so it's never unset
-window.addEventListener('DOMContentLoaded',()=>{ pickZone('A'); });
+window.addEventListener('DOMContentLoaded', function(){ pickZone('A'); });
 
 // ─────────────────────────────────────────────
 //  ZONE HUB
@@ -1062,8 +1093,8 @@ function showFinish(){
 function resetGame(){
   S={name:'',zone:'A',done:[],score:0,legoFound:0,cur:0};
   document.getElementById('playerName').value='';
-  pickZone('A');
   show('screen-welcome');
+  setTimeout(function(){ pickZone('A'); }, 50);
 }
 
 // ─────────────────────────────────────────────
