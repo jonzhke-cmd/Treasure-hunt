@@ -1352,10 +1352,10 @@ const STATION_CODES = {
   C:['BUTTERFLY','DISCOVERY','BRICKGREEN','BLOSSOM','AWESOME','NATUREFUN']
 };
 
-let camStream=null, camInterval=null;
+let camStream=null, camInterval=null; // camInterval now holds rAF id
 
 function stopCam(){
-  if(camInterval){clearInterval(camInterval);camInterval=null;}
+  if(camInterval){cancelAnimationFrame(camInterval);camInterval=null;}
   if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null;}
 }
 
@@ -1382,27 +1382,72 @@ function openScanner(idx, isLego){
 
 function startCam(){
   const video = document.getElementById('qr-video');
-  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', {willReadFrequently: true});
+  let scanning = false;
+  let lastCode = '';
+
+  const constraints = {
+    video: {
+      facingMode: {ideal: 'environment'},
+      width: {ideal: 1280},
+      height: {ideal: 720}
+    }
+  };
+
+  navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {
       camStream = stream;
       video.srcObject = stream;
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      camInterval = setInterval(()=>{
-        if(video.readyState===4){
-          canvas.width=video.videoWidth;
-          canvas.height=video.videoHeight;
-          ctx.drawImage(video,0,0);
-          const img=ctx.getImageData(0,0,canvas.width,canvas.height);
-          if(typeof jsQR!=='undefined'){
-            const result=jsQR(img.data,img.width,img.height);
-            if(result) handleCode(result.data);
+      video.setAttribute('playsinline', true);
+      video.play().catch(()=>{});
+
+      function scanFrame() {
+        if (!camStream) return; // camera stopped
+        camInterval = requestAnimationFrame(scanFrame);
+
+        // Accept readyState >= 2 (HAVE_CURRENT_DATA or better)
+        if (video.readyState < 2 || video.videoWidth === 0) return;
+        if (scanning) return; // don't stack calls
+
+        scanning = true;
+        try {
+          // Only resize canvas when video dimensions change
+          if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
           }
-        }
-      },400);
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+          if (typeof jsQR !== 'undefined') {
+            const result = jsQR(imageData.data, imageData.width, imageData.height, {
+              inversionAttempts: 'dontInvert'
+            });
+            if (result && result.data && result.data !== lastCode) {
+              lastCode = result.data;
+              handleCode(result.data);
+              // Reset lastCode after 3s so same code can be re-scanned
+              setTimeout(() => { lastCode = ''; }, 3000);
+            }
+          }
+        } catch(e) {}
+        scanning = false;
+      }
+
+      // Start scanning once video is playing
+      video.addEventListener('playing', () => {
+        if (camInterval) cancelAnimationFrame(camInterval);
+        scanFrame();
+      }, {once: true});
+      // Fallback: start after short delay
+      setTimeout(() => {
+        if (!camInterval) scanFrame();
+      }, 1000);
     })
-    .catch(()=>{
-      document.getElementById('scanStatus').textContent='📷 Camera unavailable — type code below';
+    .catch(err => {
+      console.error('Camera error:', err);
+      document.getElementById('scanStatus').textContent = '📷 Camera unavailable — type code below';
     });
 }
 
