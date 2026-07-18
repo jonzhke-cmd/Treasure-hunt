@@ -530,8 +530,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
 <div class="screen" id="screen-scanner">
   <div class="scanner-header">
     <div class="ch-breadcrumb" id="scannerLabel">Scanning Station</div>
-    <div class="scanner-title">📱 Scan Station QR</div>
-    <div class="scanner-sub">Find the QR code at the station and scan it to begin!</div>
+    <div class="scanner-title">🏅 Challenge Complete?</div>
+    <div class="scanner-sub">Ask your teacher to scan or give you the code after finishing the challenge!</div>
   </div>
   <div class="scanner-box">
     <video id="qr-video" autoplay playsinline muted></video>
@@ -541,13 +541,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
     <div class="scanner-corner sc-br"></div>
     <div class="scan-line"></div>
   </div>
-  <div class="scanner-status" id="scannerStatus">🔍 Point camera at the QR code...</div>
+  <div class="scanner-status" id="scannerStatus">📸 Ask your teacher — point camera at their QR code!</div>
   <div class="manual-input-wrap">
-    <div class="manual-divider">or enter code manually</div>
-    <input class="manual-input" id="manualCode" type="text" placeholder="e.g. NPN-A1-LOVE" maxlength="20"/>
+    <div class="manual-divider">or type the code your teacher gives you</div>
+    <input class="manual-input" id="manualCode" type="text" placeholder="Enter code from teacher" maxlength="20"/>
     <button class="manual-submit" onclick="submitManualCode()">Unlock Station ➜</button>
   </div>
-  <button class="cancel-scan" onclick="showZone()">← Back to Map</button>
+  <button class="cancel-scan" onclick="showZone()">← Back to Station Map</button>
 </div>
 
 <!-- ══════════ ZONE HUB ══════════ -->
@@ -679,7 +679,7 @@ const LEGO_FIGURES = {
 const ZONES = {
   A:{
     name:'Zone A — LOVE', icon:'❤️', color:'#E8312A', bgGrad:'linear-gradient(135deg,#E8312A,#FF6B35)',
-    progressColor:'#E8312A', sub:'PCF Sparkletots · Find Lego pieces & complete the build!',
+    progressColor:'#E8312A', sub:'Do each challenge with your teacher, then scan their QR to complete it!',
     stations:[
       { title:'Station 1: Love Quiz', type:'quiz', emoji:'❤️',
         question:'What do we say to the people we love most?',
@@ -703,7 +703,7 @@ const ZONES = {
   },
   B:{
     name:'Zone B — LAUGH', icon:'😄', color:'#FF8C00', bgGrad:'linear-gradient(135deg,#FF8C00,#FFD700)',
-    progressColor:'#FF8C00', sub:'7Oaks & Star Learners · Find Lego pieces & complete the build!',
+    progressColor:'#FF8C00', sub:'Do each challenge with your teacher, then scan their QR to complete it!',
     stations:[
       { title:'Station 1: Joke Time!', type:'quiz', emoji:'😂',
         question:'Why did the teddy bear say NO to dessert?',
@@ -727,7 +727,7 @@ const ZONES = {
   },
   C:{
     name:'Zone C — EXPLORE', icon:'🌿', color:'#00A850', bgGrad:'linear-gradient(135deg,#00A850,#006CB7)',
-    progressColor:'#00A850', sub:'Zulfa & Little Footprints · Find Lego pieces & complete the build!',
+    progressColor:'#00A850', sub:'Do each challenge with your teacher, then scan their QR to complete it!',
     stations:[
       { title:'Station 1: Nature Quiz', type:'quiz', emoji:'🌳',
         question:'What do plants need most to grow big and strong?',
@@ -829,9 +829,9 @@ function renderStations(zd){
   const typeLabels={quiz:'Quiz Challenge',action:'Action Challenge',lego:'Lego Hunt'};
   zd.stations.forEach((st,i)=>{
     const done=S.done.includes(i);
-    const locked=!done && i>0 && !S.done.includes(i-1);
+    const locked=false; // Teacher controls completion via QR — all stations visitable
     const el=document.createElement('div');
-    el.className='scard'+(done?' done':'')+(locked?' locked':'');
+    el.className='scard'+(done?' done':'');
     const isLego=st.type==='lego';
     el.innerHTML=`
       ${isLego?`<div class="lego-badge">🧱 Lego Hunt</div>`:''}
@@ -840,7 +840,7 @@ function renderStations(zd){
         <div class="scard-title">${st.title}</div>
         <div class="scard-type">${typeIcons[st.type]||'🎯'} ${typeLabels[st.type]||'Challenge'} · ${st.points} pts</div>
       </div>
-      <div class="scard-right">${done?'✅':locked?'🔒':'▶️'}</div>
+      <div class="scard-right">${done?'✅':'▶️'}</div>
     `;
     if(!locked) el.onclick=()=>openStation(i);
     grid.appendChild(el);
@@ -1114,7 +1114,7 @@ function startScanner(idx){
   const zd = ZONES[S.zone];
   document.getElementById('scannerLabel').textContent =
     zd.icon + ' ' + zd.name + ' · Station ' + (idx+1);
-  document.getElementById('scannerStatus').textContent = '🔍 Point camera at the QR code...';
+  document.getElementById('scannerStatus').textContent = '📸 Ask your teacher to scan the QR code!';
   document.getElementById('scannerStatus').className = 'scanner-status';
   document.getElementById('manualCode').value = '';
   show('screen-scanner');
@@ -1166,15 +1166,15 @@ function handleScannedCode(raw){
   const expected = STATION_CODES[S.zone][currentScanStation].toUpperCase();
   if(code === expected){
     stopCamera();
-    document.getElementById('scannerStatus').textContent = '✅ Station Unlocked!';
+    document.getElementById('scannerStatus').textContent = '✅ Challenge Verified! Great work! 🎉';
     document.getElementById('scannerStatus').className = 'scanner-status success';
     spawnConf(20);
     setTimeout(()=>launchChallenge(currentScanStation), 800);
   } else {
-    document.getElementById('scannerStatus').textContent = '❌ Wrong QR — find the correct station!';
+    document.getElementById('scannerStatus').textContent = '❌ Wrong code — ask your teacher for the correct one!';
     document.getElementById('scannerStatus').className = 'scanner-status error';
     setTimeout(()=>{
-      document.getElementById('scannerStatus').textContent = '🔍 Point camera at the QR code...';
+      document.getElementById('scannerStatus').textContent = '📸 Ask your teacher to scan the QR code!';
       document.getElementById('scannerStatus').className = 'scanner-status';
     },2000);
   }
