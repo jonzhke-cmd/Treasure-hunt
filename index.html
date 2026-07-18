@@ -515,44 +515,25 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
     <div class="field-label">Your Name</div>
     <input class="name-input" id="playerName" type="text" placeholder="Type your name here 😊" maxlength="20"/>
     <div class="field-label">Choose Your Zone</div>
-
-    <!-- Pure CSS radio zone picker — no JS needed -->
-    <style>
-      .zradio { display:none; }
-      .zlabel {
-        display:block; flex:1; padding:14px 6px;
-        border-radius:14px; border:3px solid #ddd;
-        background:white; color:#555;
-        font-family:'Fredoka One',cursive; font-size:0.95rem;
-        text-align:center; cursor:pointer;
-        box-shadow:0 4px 0 #ddd;
-        transition:all 0.15s;
-        -webkit-tap-highlight-color:transparent;
-        touch-action:manipulation;
-      }
-      #zr-A:checked ~ .zrow #zl-A,
-      .zrow #zl-A:has(~ #zr-A:checked) { background:#E8312A;border-color:#E8312A;color:white;box-shadow:0 4px 0 #8B0000; }
-      #zr-B:checked ~ .zrow #zl-B { background:#FF8C00;border-color:#FF8C00;color:white;box-shadow:0 4px 0 #8B4500; }
-      #zr-C:checked ~ .zrow #zl-C { background:#00A850;border-color:#00A850;color:white;box-shadow:0 4px 0 #004D25; }
-    </style>
-
-    <input type="radio" name="zone" id="zr-A" class="zradio" value="A" checked>
-    <input type="radio" name="zone" id="zr-B" class="zradio" value="B">
-    <input type="radio" name="zone" id="zr-C" class="zradio" value="C">
-
-    <div class="zrow" style="display:flex;gap:10px;margin-top:6px;width:100%">
-      <label for="zr-A" id="zl-A" class="zlabel" style="background:#E8312A;border-color:#E8312A;color:white;box-shadow:0 4px 0 #8B0000">
-        ❤️<br>Zone A<br><small>LOVE</small>
-      </label>
-      <label for="zr-B" id="zl-B" class="zlabel">
-        😄<br>Zone B<br><small>LAUGH</small>
-      </label>
-      <label for="zr-C" id="zl-C" class="zlabel">
-        🌿<br>Zone C<br><small>EXPLORE</small>
-      </label>
+    <div style="display:flex;gap:10px;margin-top:8px;width:100%">
+      <div id="zl-A" style="flex:1;padding:16px 6px;border-radius:14px;border:3px solid #E8312A;background:#E8312A;color:white;font-family:Fredoka One,cursive;font-size:1rem;text-align:center;cursor:pointer;box-shadow:0 4px 0 #8B0000;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" onclick="selectZone('A')">
+        <span style="font-size:1.4rem">❤️</span>
+        <strong>Zone A</strong>
+        <small style="font-size:0.7rem;opacity:0.9">LOVE</small>
+      </div>
+      <div id="zl-B" style="flex:1;padding:16px 6px;border-radius:14px;border:3px solid #ddd;background:white;color:#555;font-family:Fredoka One,cursive;font-size:1rem;text-align:center;cursor:pointer;box-shadow:0 4px 0 #ddd;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" onclick="selectZone('B')">
+        <span style="font-size:1.4rem">😄</span>
+        <strong>Zone B</strong>
+        <small style="font-size:0.7rem;opacity:0.7">LAUGH</small>
+      </div>
+      <div id="zl-C" style="flex:1;padding:16px 6px;border-radius:14px;border:3px solid #ddd;background:white;color:#555;font-family:Fredoka One,cursive;font-size:1rem;text-align:center;cursor:pointer;box-shadow:0 4px 0 #ddd;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" onclick="selectZone('C')">
+        <span style="font-size:1.4rem">🌿</span>
+        <strong>Zone C</strong>
+        <small style="font-size:0.7rem;opacity:0.7">EXPLORE</small>
+      </div>
     </div>
-
-    <button class="start-btn" onclick="startGame()" style="touch-action:manipulation;margin-top:20px">
+    <div id="zoneConfirm" style="text-align:center;margin-top:10px;font-size:0.85rem;font-weight:800;color:#E8312A">✅ Zone A selected</div>
+    <button id="startBtn" style="width:100%;margin-top:14px;padding:17px;background:#1C1C1E;color:white;border:none;border-radius:16px;font-family:Fredoka One,cursive;font-size:1.4rem;cursor:pointer;box-shadow:0 5px 0 #000;letter-spacing:1px;touch-action:manipulation" onclick="startGame()">
       Start Hunting! 🚀
     </button>
   </div>
@@ -816,45 +797,67 @@ function show(id){
   window.scrollTo(0,0);
 }
 
-function pickZone(z){
+// ── ZONE SELECTION ──
+var SELECTED_ZONE = 'A';
+
+function selectZone(z) {
+  SELECTED_ZONE = z;
   S.zone = z;
+
   var zones = ['A','B','C'];
-  var colors = {A:'#E8312A', B:'#FF8C00', C:'#00A850'};
-  var shadows = {A:'#8B0000', B:'#8B4500', C:'#004D25'};
-  zones.forEach(function(id){
-    var el = document.getElementById('zp-'+id);
-    if(!el) return;
-    if(id === z){
-      el.style.background = colors[id];
-      el.style.borderColor = colors[id];
-      el.style.color = 'white';
-      el.style.boxShadow = '0 4px 0 '+shadows[id];
-      el.style.transform = 'translateY(-2px)';
+  var active = {
+    A: {bg:'#E8312A', border:'#E8312A', color:'white', shadow:'0 4px 0 #8B0000'},
+    B: {bg:'#FF8C00', border:'#FF8C00', color:'white', shadow:'0 4px 0 #8B4500'},
+    C: {bg:'#00A850', border:'#00A850', color:'white', shadow:'0 4px 0 #004D25'}
+  };
+  var znames = {A:'Zone A', B:'Zone B', C:'Zone C'};
+
+  zones.forEach(function(id) {
+    var el = document.getElementById('zl-' + id);
+    if (!el) return;
+    if (id === z) {
+      el.style.background  = active[id].bg;
+      el.style.borderColor = active[id].border;
+      el.style.color       = 'white';
+      el.style.boxShadow   = active[id].shadow;
+      el.style.transform   = 'translateY(-2px)';
     } else {
-      el.style.background = 'white';
-      el.style.borderColor = '#ccc';
-      el.style.color = '#333';
-      el.style.boxShadow = '0 4px 0 #ccc';
-      el.style.transform = 'none';
+      el.style.background  = 'white';
+      el.style.borderColor = '#ddd';
+      el.style.color       = '#555';
+      el.style.boxShadow   = '0 4px 0 #ddd';
+      el.style.transform   = 'none';
     }
   });
+
+  var confirm = document.getElementById('zoneConfirm');
+  var colors = {A:'#E8312A', B:'#FF8C00', C:'#00A850'};
+  if (confirm) {
+    confirm.textContent = '✅ ' + znames[z] + ' selected';
+    confirm.style.color = colors[z];
+  }
 }
 
-function startGame(){
+function startGame() {
   var n = document.getElementById('playerName').value.trim();
-  if(!n){ alert('Please enter your name! 😊'); return; }
-  // Read zone from radio input - guaranteed to work on all devices
-  var radios = document.querySelectorAll('input[name="zone"]');
-  var selectedZone = 'A';
-  for(var i=0; i<radios.length; i++){
-    if(radios[i].checked){ selectedZone = radios[i].value; break; }
-  }
-  S.zone = selectedZone;
-  S.name = n; S.done = []; S.score = 0; S.legoFound = 0;
+  if (!n) { alert('Please enter your name! 😊'); return; }
+  S.zone  = SELECTED_ZONE;
+  S.name  = n;
+  S.done  = [];
+  S.score = 0;
+  S.legoFound = 0;
   showZone();
 }
 
-window.addEventListener('DOMContentLoaded', function(){ pickZone('A'); });
+function resetGame() {
+  SELECTED_ZONE = 'A';
+  S = {name:'', zone:'A', done:[], score:0, legoFound:0, cur:0};
+  document.getElementById('playerName').value = '';
+  show('screen-welcome');
+  setTimeout(function() { selectZone('A'); }, 100);
+}
+
+window.addEventListener('DOMContentLoaded', function() { selectZone('A'); })
 
 // ─────────────────────────────────────────────
 //  ZONE HUB
