@@ -819,106 +819,68 @@ function renderStations(zd){
 }
 
 // ─────────────────────────────────────────────
-//  OPEN STATION
+//  OPEN STATION — go straight to scanner
 // ─────────────────────────────────────────────
 function openStation(idx){
   stopCam();
-  S.cur=idx;
-  const zd=ZONES[S.zone];
-  const st=zd.stations[idx];
-  const done=S.done.includes(idx);
-  // Lego stations show clue first via the challenge screen, then scan button
-  // If already done, just show completed view
-  document.getElementById('chBread').textContent=`${zd.icon} ${zd.name} · Station ${idx+1}`;
-  const p2=document.getElementById('progressFill2');
-  p2.style.width=((S.done.length/6)*100)+'%';
-  p2.style.background=zd.color;
+  S.cur = idx;
+  const zd = ZONES[S.zone];
+  const st = zd.stations[idx];
+  const done = S.done.includes(idx);
 
-  const card=document.getElementById('chCard');
-  card.innerHTML='';
-
-  // Top section color bar
-  let topStyle=`background:${zd.bgGrad}`;
-  let bodyHTML='';
-
-  if(st.type==='quiz'){
-    const topHTML=`
-      <div class="ch-card-top" style="${topStyle}">
-        <div class="ch-emoji">${st.emoji}</div>
-        <div class="ch-type-tag">Quiz Challenge</div>
-        <div class="ch-question">${st.question}</div>
-      </div>`;
-    const optsHTML=st.options.map((o,i)=>{
-      let cls='qopt';
-      if(done){ cls+= i===st.answer?' correct':' disabled'; }
-      return `<button class="${cls}" onclick="${done?'':'handleQuiz('+i+','+st.answer+')'}">${o}</button>`;
-    }).join('');
-    bodyHTML=`
-      <div class="quiz-grid">${optsHTML}</div>
-      ${st.hint?`<div class="hint-row"><button class="hint-btn" onclick="toggleHint(this)">💡 Need a hint?</button></div><div class="hint-box">${st.hint}</div>`:''}
-    `;
-    card.innerHTML=topHTML+`<div class="ch-body">${bodyHTML}</div>`;
-
-  } else if(st.type==='action'){
-    card.innerHTML=`
-      <div class="ch-card-top" style="${topStyle}">
-        <div class="ch-emoji">${st.emoji}</div>
-        <div class="ch-type-tag">Action Challenge</div>
-        <div class="ch-question">${st.question}</div>
-      </div>
-      <div class="ch-body">
-        <div class="action-steps">
-          ${st.steps.map((s,i)=>`<div class="astep"><div class="astep-n">${i+1}</div><div>${s}</div></div>`).join('')}
-        </div>
-        ${done
-          ?`<button class="cta-btn" style="background:#16A34A" disabled>✅ Challenge Done!</button>`
-          :`<button class="cta-btn" style="background:${zd.color}" onclick="openScanner(${idx},false)">Done! Scan Teacher QR 📱</button>`
-        }
-      </div>`;
-
-  } else if(st.type==='lego'){
-    const fig=LEGO_FIGURES[S.zone].find(f=>f.id===st.legoId);
-    if(done){
-      card.innerHTML=`
-        <div class="ch-card-top" style="${topStyle}">
-          <div class="ch-emoji">🧱</div>
-          <div class="ch-type-tag">🧱 Lego Hunt · Piece #${fig?fig.pieceNum:'?'}</div>
-          <div class="ch-question">${fig?fig.name:'Lego Figure'} — Found!</div>
-        </div>
-        <div class="ch-body" style="text-align:center">
-          <div style="font-size:5rem;margin:20px 0">🧱✅</div>
-          <p style="color:#16A34A;font-weight:900;font-size:1.1rem">Lego piece collected! Great work!</p>
-        </div>`;
-    } else {
-      // Show clue then scan button
-      card.innerHTML=`
-        <div class="ch-card-top" style="${topStyle}">
-          <div class="ch-emoji">🧱</div>
-          <div class="ch-type-tag">🧱 Lego Hunt · Piece #${fig?fig.pieceNum:'?'}</div>
-          <div class="ch-question">Find the hidden Lego figure!</div>
-        </div>
-        <div class="ch-body">
-          <div class="lego-find-wrap">
-            <div class="lego-placeholder" style="border:3px solid #1C1C1E;border-radius:14px;margin-bottom:12px;padding:20px">
-              <div class="lp-icon" style="font-size:3rem">${fig?fig.emoji:'🧱'}</div>
-              <div class="lp-name" style="font-family:'Fredoka One',cursive;font-size:1.1rem;margin-top:6px">${fig?fig.name:'Lego Figure'}</div>
-              <div style="font-size:0.75rem;font-weight:700;color:#888;margin-top:4px">Piece #${fig?fig.pieceNum:'?'}</div>
-            </div>
-            <div class="find-clue">
-              <div class="find-clue-label">🗺️ Clue</div>
-              <div class="find-clue-text">${fig?fig.clue:'Look around carefully!'}</div>
-            </div>
-            <p style="font-size:0.8rem;font-weight:700;color:#888;margin-bottom:14px">📍 ${fig?fig.hiddenAt:''}</p>
-            <div style="background:#FFFBEB;border:2px solid #FFD700;border-radius:12px;padding:12px;text-align:center;margin-bottom:14px">
-              <div style="font-size:1.5rem;margin-bottom:4px">🔍 ➜ 🧱 ➜ 📱</div>
-              <div style="font-weight:800;font-size:0.85rem;color:#92400E">Find it · Flip it · Scan the QR on the back!</div>
-            </div>
-            <button class="cta-btn" style="background:${zd.color}" onclick="openScanner(${idx},true)">Ready to Scan! 🧱📱</button>
-          </div>
-        </div>`;
-    }
+  // If already done, show completed screen
+  if(done){
+    showCompleted(idx);
+    return;
   }
 
+  // All stations go straight to scanner
+  const isLego = st.type === 'lego';
+  const fig = isLego ? LEGO_FIGURES[S.zone].find(f=>f.id===st.legoId) : null;
+
+  document.getElementById('scanBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1} of 6`;
+  document.getElementById('scanBread').style.color = zd.color;
+
+  if(isLego){
+    document.getElementById('scanTitle').textContent = '🧱 Find the Lego Figure!';
+    document.getElementById('scanSub').innerHTML =
+      `<b style="color:${zd.color}">${fig ? fig.name : 'Hidden Lego'}</b><br>` +
+      `${fig ? fig.clue : 'Look around carefully!'}<br>` +
+      `<span style="color:#aaa;font-size:0.8rem">📍 ${fig ? fig.hiddenAt : ''}</span><br><br>` +
+      `<span style="background:#FFFBEB;border:1px solid #FFD700;border-radius:8px;padding:6px 12px;font-size:0.82rem;color:#92400E;font-weight:800">🔍 Find it · Flip it · Scan the QR on the back!</span>`;
+  } else {
+    document.getElementById('scanTitle').textContent = '📋 Complete the Challenge!';
+    document.getElementById('scanSub').innerHTML =
+      `<b>Go find your teacher at this station.</b><br>Complete their challenge or task,<br>then scan their QR code or enter the password to unlock!`;
+  }
+
+  document.getElementById('scanStatus').textContent = '📸 Point camera at QR code';
+  document.getElementById('scanStatus').className = 'scan-status';
+  document.getElementById('codeInput').value = '';
+  show('screen-scanner');
+  startCam();
+}
+
+function showCompleted(idx){
+  const zd = ZONES[S.zone];
+  const st = zd.stations[idx];
+  const card = document.getElementById('chCard');
+  document.getElementById('chBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1}`;
+  const p2 = document.getElementById('progressFill2');
+  p2.style.width = ((S.done.length/6)*100)+'%';
+  p2.style.background = zd.color;
+  card.innerHTML = `
+    <div class="ch-card-top" style="background:${zd.bgGrad}">
+      <div class="ch-emoji">${st.type==='lego'?'🧱':st.emoji||'✅'}</div>
+      <div class="ch-type-tag">${st.type==='lego'?'🧱 Lego Hunt':'Challenge'}</div>
+      <div class="ch-question">Station ${idx+1}: ${st.title} — Done!</div>
+    </div>
+    <div class="ch-body" style="text-align:center">
+      <div style="font-size:4rem;margin:20px 0">✅</div>
+      <p style="color:#16A34A;font-weight:900;font-size:1.1rem;margin-bottom:8px">Station completed!</p>
+      <p style="color:#888;font-size:0.85rem;font-weight:700">Head to the next station 👉</p>
+      <button class="cta-btn" style="background:${zd.color};margin-top:20px" onclick="showZone()">Back to Map 🗺️</button>
+    </div>`;
   show('screen-challenge');
 }
 
@@ -1151,9 +1113,10 @@ function completeAndNext(){
   const st = ZONES[S.zone].stations[S.cur];
   if(!S.done.includes(S.cur)){
     S.done.push(S.cur);
-    S.score += (st.pts || 20);
+    const pts = st.points || st.pts || 20;
+    S.score += pts;
     if(st.type==='lego') S.legoFound++;
-    showPtBurst('+'+(st.pts||20)+' '+(st.type==='lego'?'🧱':'⭐'));
+    showPtBurst('+'+pts+' '+(st.type==='lego'?'🧱':'⭐'));
     spawnConf(st.type==='lego'?60:30);
   }
   if(S.done.length >= 6){ setTimeout(showFinish, 600); }
