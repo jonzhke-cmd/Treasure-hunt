@@ -784,18 +784,23 @@ function show(id){
 
 function pickZone(z){
   S.zone=z;
-  document.querySelectorAll('.zone-pick').forEach(b=>b.className='zone-pick');
-  document.getElementById('zp-'+z).classList.add('sel-'+z.toLowerCase());
+  document.querySelectorAll('.zone-pick').forEach(b=>{
+    b.className='zone-pick';
+  });
+  const btn=document.getElementById('zp-'+z);
+  if(btn) btn.classList.add('sel-'+z.toLowerCase());
 }
 
 function startGame(){
   const n=document.getElementById('playerName').value.trim();
   if(!n){alert('Please enter your name! 😊');return;}
-  if(!document.querySelector('.zone-pick.sel-a,.zone-pick.sel-b,.zone-pick.sel-c'))
-    {alert('Please pick your zone!');return;}
+  if(!S.zone){alert('Please pick your zone!');return;}
   S.name=n; S.done=[]; S.score=0; S.legoFound=0;
   showZone();
 }
+
+// Pre-select Zone A on page load so it's never unset
+window.addEventListener('DOMContentLoaded',()=>{ pickZone('A'); });
 
 // ─────────────────────────────────────────────
 //  ZONE HUB
@@ -1057,7 +1062,7 @@ function showFinish(){
 function resetGame(){
   S={name:'',zone:'A',done:[],score:0,legoFound:0,cur:0};
   document.getElementById('playerName').value='';
-  document.querySelectorAll('.zone-pick').forEach(b=>b.className='zone-pick');
+  pickZone('A');
   show('screen-welcome');
 }
 
