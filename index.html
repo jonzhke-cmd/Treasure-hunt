@@ -43,6 +43,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
 #screen-welcome{
   background:linear-gradient(145deg,#FFE14D 0%,#FF6B35 40%,#E8312A 100%);
   text-align:center;
+  position:relative;
+  z-index:50;
 }
 
 .lego-logo{
@@ -86,6 +88,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
   width:100%;max-width:380px;
   border:4px solid var(--dark);
   box-shadow:6px 6px 0 var(--dark);
+  position:relative;z-index:10;
 }
 .welcome-card h3{
   font-family:'Fredoka One',cursive;font-size:1.3rem;
@@ -515,8 +518,8 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
     <div class="field-label">Your Name</div>
     <input class="name-input" id="playerName" type="text" placeholder="Type your name here 😊" maxlength="20"/>
     <div class="field-label">Choose Your Zone</div>
-    <div style="display:flex;gap:10px;margin-top:8px;width:100%">
-      <div id="zl-A" style="flex:1;padding:16px 6px;border-radius:14px;border:3px solid #E8312A;background:#E8312A;color:white;font-family:Fredoka One,cursive;font-size:1rem;text-align:center;cursor:pointer;box-shadow:0 4px 0 #8B0000;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" onclick="selectZone('A')">
+    <div style="display:flex;gap:10px;margin-top:8px;width:100%;position:relative;z-index:20">
+      <div id="zl-A" style="flex:1;padding:16px 6px;border-radius:14px;border:3px solid #E8312A;background:#E8312A;color:white;font-family:Fredoka One,cursive;font-size:1rem;text-align:center;cursor:pointer;box-shadow:0 4px 0 #8B0000;min-height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px" onclick="selectZone('A')" style2="z-index:20;position:relative">
         <span style="font-size:1.4rem">❤️</span>
         <strong>Zone A</strong>
         <small style="font-size:0.7rem;opacity:0.9">LOVE</small>
@@ -533,7 +536,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
       </div>
     </div>
     <div id="zoneConfirm" style="text-align:center;margin-top:10px;font-size:0.85rem;font-weight:800;color:#E8312A">✅ Zone A selected</div>
-    <button id="startBtn" style="width:100%;margin-top:14px;padding:17px;background:#1C1C1E;color:white;border:none;border-radius:16px;font-family:Fredoka One,cursive;font-size:1.4rem;cursor:pointer;box-shadow:0 5px 0 #000;letter-spacing:1px;touch-action:manipulation" onclick="startGame()">
+    <button id="startBtn" style="width:100%;margin-top:14px;padding:17px;background:#1C1C1E;color:white;border:none;border-radius:16px;font-family:Fredoka One,cursive;font-size:1.4rem;cursor:pointer;box-shadow:0 5px 0 #000;letter-spacing:1px;touch-action:manipulation;position:relative;z-index:20" onclick="startGame()">
       Start Hunting! 🚀
     </button>
   </div>
@@ -795,6 +798,15 @@ function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+  // Hide modal overlay completely on welcome screen to prevent touch interception
+  var modal = document.getElementById('modal');
+  if(modal){
+    if(id === 'screen-welcome'){
+      modal.style.display = 'none';
+    } else {
+      modal.style.display = 'flex';
+    }
+  }
 }
 
 // ── ZONE SELECTION ──
@@ -857,7 +869,12 @@ function resetGame() {
   setTimeout(function() { selectZone('A'); }, 100);
 }
 
-window.addEventListener('DOMContentLoaded', function() { selectZone('A'); })
+window.addEventListener('DOMContentLoaded', function() {
+  selectZone('A');
+  // Hide modal on load so it never blocks welcome screen
+  var modal = document.getElementById('modal');
+  if(modal) modal.style.display = 'none';
+});
 
 // ─────────────────────────────────────────────
 //  ZONE HUB
