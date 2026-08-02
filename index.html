@@ -41,6 +41,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);overflow-x:hidden;min-
 
 /* ── SCREENS ── */
 .screen{display:none;min-height:100vh;position:relative;z-index:1;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+#screen-rules{background:linear-gradient(145deg,#FFE14D 0%,#FF6B35 40%,#E8312A 100%);padding:32px 16px;justify-content:flex-start;padding-top:48px;}
 .screen.active{display:flex}
 
 /* ════════════ WELCOME ════════════ */
@@ -805,8 +806,95 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
       <div style="font-size:0.75rem;font-weight:700;color:#888;margin-top:2px">Open to all participants 🎉</div>
     </div>
     <button class="start-btn" onclick="startGame()">Start Hunting! 🚀</button>
+    <button onclick="showRules()" style="
+      width:100%;margin-top:10px;padding:12px;
+      background:transparent;color:#E8312A;
+      border:2.5px solid #E8312A;border-radius:14px;
+      font-family:'Fredoka One',cursive;font-size:1rem;
+      cursor:pointer;letter-spacing:0.5px;
+    ">📖 How to Play</button>
   </div>
   <p style="color:rgba(255,255,255,0.7);font-size:0.78rem;font-weight:700;margin-top:16px">Potter's Garden · CleanTech Three · 19 September 2026</p>
+</div>
+
+<!-- ══════════ RULES SCREEN ══════════ -->
+<div class="screen" id="screen-rules">
+  <div style="width:100%;max-width:420px;position:relative;z-index:1;">
+
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#E8312A,#FF6B35);border-radius:20px 20px 0 0;padding:22px 24px 18px;text-align:center;border:3px solid #1C1C1E;border-bottom:none;">
+      <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:white;line-height:1;">📖 How to Play</div>
+      <div style="font-size:0.8rem;font-weight:800;color:rgba(255,255,255,0.8);margin-top:4px;letter-spacing:1px;">Building Blocks Hunt SG 2026</div>
+    </div>
+
+    <!-- Body -->
+    <div style="background:white;border:3px solid #1C1C1E;border-top:none;border-radius:0 0 20px 20px;padding:22px 22px 24px;box-shadow:5px 5px 0 #1C1C1E;">
+
+      <!-- Steps -->
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;min-width:36px;background:#E8312A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;color:white;border:2px solid #1C1C1E;">1</div>
+          <div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1C1C1E;">Choose Any Station</div>
+            <div style="font-size:0.8rem;font-weight:700;color:#666;margin-top:2px;">All 5 stations are open — go in any order you like!</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;min-width:36px;background:#E8312A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;color:white;border:2px solid #1C1C1E;">2</div>
+          <div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1C1C1E;">Complete the Task</div>
+            <div style="font-size:0.8rem;font-weight:700;color:#666;margin-top:2px;">👨‍👩‍👧 <b>Family Challenges</b> (Stations 1, 3, 5) — join in with the teacher's activity!<br>🧱 <b>Lego Hunt</b> (Stations 2, 4) — find the hidden Lego figurine &amp; scan its QR code!</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;min-width:36px;background:#E8312A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;color:white;border:2px solid #1C1C1E;">3</div>
+          <div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1C1C1E;">Scan or Enter Password</div>
+            <div style="font-size:0.8rem;font-weight:700;color:#666;margin-top:2px;">Scan the QR code or type the password given by the teacher to unlock each station.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:36px;height:36px;min-width:36px;background:#E8312A;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.1rem;color:white;border:2px solid #1C1C1E;">4</div>
+          <div>
+            <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1C1C1E;">Unlock All 5 → Get Your Ticket!</div>
+            <div style="font-size:0.8rem;font-weight:700;color:#666;margin-top:2px;">Complete all 5 stations to receive your 🎡 <b>FREE SPIN Redemption Ticket</b>!</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Redemption box -->
+      <div style="background:#FFF8DC;border:2.5px solid #FFD700;border-radius:14px;padding:14px 16px;margin-bottom:18px;">
+        <div style="font-family:'Fredoka One',cursive;font-size:1.05rem;color:#1C1C1E;margin-bottom:6px;">🎡 Redeem Your Reward</div>
+        <div style="font-size:0.8rem;font-weight:700;color:#555;line-height:1.6;">
+          📍 <b>Redemption Station</b><br>
+          CleanTech 3, Level 2<br><br>
+          🕐 <b>Redemption starts at 11.30am onwards</b><br><br>
+          Screenshot your ticket and show it to the attendant to claim your <b>FREE SPIN</b> on the Rewards Wheel!
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <button onclick="show('screen-welcome')" style="
+        width:100%;padding:15px;
+        background:#1C1C1E;color:white;border:none;
+        border-radius:14px;font-family:'Fredoka One',cursive;
+        font-size:1.1rem;cursor:pointer;
+        box-shadow:0 4px 0 #000;margin-bottom:8px;
+      ">← Back</button>
+      <button onclick="show('screen-welcome');setTimeout(()=>document.getElementById('playerName').focus(),300)" style="
+        width:100%;padding:13px;
+        background:#E8312A;color:white;border:3px solid #1C1C1E;
+        border-radius:14px;font-family:'Fredoka One',cursive;
+        font-size:1rem;cursor:pointer;box-shadow:0 3px 0 #8B0000;
+      ">Let's Hunt! 🚀</button>
+
+    </div>
+  </div>
 </div>
 
 <!-- ══════════ ZONE HUB ══════════ -->
@@ -1011,6 +1099,8 @@ function pickZone(z){
   document.querySelectorAll('.zone-pick').forEach(b=>b.className='zone-pick');
   document.getElementById('zp-'+z).classList.add('sel-'+z.toLowerCase());
 }
+
+function showRules(){ show('screen-rules'); }
 
 function startGame(){
   const n=document.getElementById('playerName').value.trim();
