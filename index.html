@@ -1046,9 +1046,11 @@ function showZone(){ stopCam();
     const banner = document.createElement('div');
     banner.id = 'redeemBanner';
     banner.style.cssText = 'width:100%;max-width:520px;margin-top:16px;background:linear-gradient(135deg,#E8312A,#FF6B35);border:3px solid #1C1C1E;border-radius:18px;padding:18px 20px;text-align:center;box-shadow:4px 4px 0 #1C1C1E;animation:brickPop 0.5s cubic-bezier(.34,1.56,.64,1);';
-    banner.innerHTML = '<div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;margin-bottom:4px">🎡 All Stations Complete!</div>'
-      + '<div style="font-size:0.85rem;font-weight:800;color:rgba(255,255,255,0.85);margin-bottom:14px">You scored '+S.score+' points — claim your FREE SPIN now!</div>'
-      + '<button onclick="showFinish()" style="background:white;color:#E8312A;border:3px solid #1C1C1E;border-radius:14px;padding:14px 28px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;box-shadow:3px 3px 0 #1C1C1E;width:100%;touch-action:manipulation;">🎟️ Show My Ticket → Reward Station</button>';
+    banner.innerHTML = `
+      <div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;margin-bottom:4px">🎡 All Stations Complete!</div>
+      <div style="font-size:0.85rem;font-weight:800;color:rgba(255,255,255,0.85);margin-bottom:14px">You scored ${S.score} points — claim your FREE SPIN now!</div>
+      <button onclick="showFinish()" style="background:white;color:#E8312A;border:3px solid #1C1C1E;border-radius:14px;padding:14px 28px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;box-shadow:3px 3px 0 #1C1C1E;width:100%;touch-action:manipulation;">🎟️ Show My Ticket → Reward Station</button>
+    `;
     const grid = document.getElementById('stationGrid');
     grid.parentNode.insertBefore(banner, grid.nextSibling);
   }
