@@ -819,7 +819,7 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
     </div>
     <div class="hub-score-card">
       <div class="hub-score-label">Stations</div>
-      <div class="hub-score-val" id="hubStations">0/6</div>
+      <div class="hub-score-val" id="hubStations">0/5</div>
     </div>
     <div class="hub-score-card">
       <div class="hub-score-label">Lego Pieces</div>
@@ -829,7 +829,7 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
   <div class="progress-track">
     <div class="progress-fill" id="progressFill" style="width:0%"></div>
   </div>
-  <p class="progress-label" id="progressLabel">0 of 6 stations completed</p>
+  <p class="progress-label" id="progressLabel">0 of 5 stations completed</p>
   <div class="station-grid" id="stationGrid"></div>
 </div>
 
@@ -953,24 +953,20 @@ const ZONES = {
     bgGrad:'linear-gradient(135deg,#E8312A,#FF6B35)',
     progressColor:'#E8312A', sub:'Open to all participants!',
     stations:[
-      { title:'Station 1: Love Quiz', type:'quiz', emoji:'❤️',
-        question:'What do we say to the people we love most?',
-        options:['I love you! 💕','Go away!','I\'m busy','Whatever!'], answer:0,
-        hint:'Three special words that make hearts feel warm!', points:20 },
-      { title:'Station 2: Family Hug!', type:'action', emoji:'🤗',
-        question:'Give every family member a big hug right now!',
-        steps:['Find ALL your family members nearby 👨‍👩‍👧‍👦','Hold out your arms as wide as you can 🙌','Hug them ALL at once — group hug!','Shout: \"I LOVE MY FAMILY!\" together 💕'],
+      { title:'Station 1: Family Challenge', type:'action', emoji:'👨‍👩‍👧',
+        question:'Complete the family challenge at this station!',
+        steps:['Listen to the teacher at this station 👩‍🏫','Complete the activity together as a family 💪','Get the QR code or password from the teacher when done ✅'],
         points:20 },
-      { title:'Station 3: 🧱 Find Lego #1', type:'lego', legoId:'A1', points:30 },
-      { title:'Station 4: Kindness Challenge', type:'quiz', emoji:'🌸',
-        question:'Your friend is crying. What do you do?',
-        options:['Walk away','Laugh at them','Ask if they\'re okay & give a hug 🤗','Ignore them'], answer:2,
-        hint:'What would YOU want someone to do for you?', points:20 },
-      { title:'Station 5: Sharing Action', type:'action', emoji:'🍎',
-        question:'Share something with someone near you!',
-        steps:['Find something you have — a snack, a toy, or a smile 😊','Find someone near you to share with','Share it with them and say: \"This is for you!\"','Watch their face light up! ✨'],
+      { title:'Station 2: 🧱 Lego Hunt #1', type:'lego', legoId:'A1', points:20 },
+      { title:'Station 3: Family Challenge', type:'action', emoji:'👨‍👩‍👧',
+        question:'Complete the family challenge at this station!',
+        steps:['Listen to the teacher at this station 👩‍🏫','Complete the activity together as a family 💪','Get the QR code or password from the teacher when done ✅'],
         points:20 },
-      { title:'Station 6: 🧱 Find Lego #2', type:'lego', legoId:'A2', points:30 },
+      { title:'Station 4: 🧱 Lego Hunt #2', type:'lego', legoId:'A2', points:20 },
+      { title:'Station 5: Family Challenge', type:'action', emoji:'👨‍👩‍👧',
+        question:'Complete the family challenge at this station!',
+        steps:['Listen to the teacher at this station 👩‍🏫','Complete the activity together as a family 💪','Get the QR code or password from the teacher when done ✅'],
+        points:20 },
     ]
   }
 };
@@ -1028,13 +1024,13 @@ function showZone(){ stopCam();
   document.getElementById('zoneSub').textContent=zd.sub;
   // Stats
   document.getElementById('hubPoints').textContent=S.score;
-  document.getElementById('hubStations').textContent=S.done.length+'/6';
+  document.getElementById('hubStations').textContent=S.done.length+'/5';
   document.getElementById('hubLego').textContent=S.legoFound+'🧱';
   // Progress
-  const pct=(S.done.length/6)*100;
+  const pct=(S.done.length/5)*100;
   document.getElementById('progressFill').style.width=pct+'%';
   document.getElementById('progressFill').style.background=zd.progressColor;
-  document.getElementById('progressLabel').textContent=S.done.length+' of 6 stations completed';
+  document.getElementById('progressLabel').textContent=S.done.length+' of 5 stations completed';
   // Stations
   renderStations(zd);
   show('screen-zone');
@@ -1114,7 +1110,7 @@ function showCompleted(idx){
   const card = document.getElementById('chCard');
   document.getElementById('chBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1}`;
   const p2 = document.getElementById('progressFill2');
-  p2.style.width = ((S.done.length/6)*100)+'%';
+  p2.style.width = ((S.done.length/5)*100)+'%';
   p2.style.background = zd.color;
   card.innerHTML = `
     <div class="ch-card-top" style="background:${zd.bgGrad}">
@@ -1174,7 +1170,7 @@ function complete(pts, isLego=false){
     showPtBurst('+'+pts+' '+(isLego?'🧱':'⭐'));
     spawnConf(isLego?60:30);
   }
-  if(S.done.length>=6){ setTimeout(showFinish,600); } else { showZone(); }
+  if(S.done.length>=5){ setTimeout(showFinish,600); } else { showZone(); }
 }
 
 // ─────────────────────────────────────────────
@@ -1234,7 +1230,7 @@ function showFinish(){
   // 6 Station stamps
   const stamps = document.getElementById('vtkStamps');
   stamps.innerHTML = '';
-  for(var i=1;i<=6;i++){
+  for(var i=1;i<=5;i++){
     var d = document.createElement('div');
     d.className = 'vtk-stamp';
     d.style.background = c.color + '22';
@@ -1285,7 +1281,7 @@ function showPtBurst(txt){
 //  STATION CODES
 // ─────────────────────────────────────────────
 const STATION_CODES = {
-  A:['SUNSHINE','RAINBOW','BRICKRED','KINDSTAR','TOGETHER','HEARTGOLD']
+  A:['SUNSHINE','BRICKRED','RAINBOW','BRICKYELLOW','TOGETHER']
 };
 
 let html5QrScanner = null;
