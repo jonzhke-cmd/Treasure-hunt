@@ -788,21 +788,17 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
   <div style="color:rgba(255,255,255,0.8);font-size:0.8rem;font-weight:800;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase">✨ presents ✨</div>
   <div class="welcome-title">Building Blocks</div>
   <div class="welcome-title2">Hunt SG 2026 🧩</div>
-  <div class="zone-pills">
-    <div class="zone-pill" style="background:rgba(232,49,42,0.5)">❤️ Love</div>
-    <div class="zone-pill" style="background:rgba(255,140,0,0.5)">😄 Laugh</div>
-    <div class="zone-pill" style="background:rgba(0,168,80,0.5)">🌿 Explore</div>
-  </div>
+  <div style="color:rgba(255,255,255,0.9);font-size:0.85rem;font-weight:800;margin-bottom:8px;letter-spacing:1px">❤️ Open to ALL participants</div>
+
 
   <div class="welcome-card">
     <h3>🏁 Let's Begin Your Hunt!</h3>
     <div class="field-label">Your Name</div>
     <input class="name-input" id="playerName" type="text" placeholder="Type your name here 😊" maxlength="20"/>
-    <div class="field-label">Choose Your Zone</div>
-    <div class="zone-row">
-      <button class="zone-pick" id="zp-A" onclick="pickZone('A')">❤️<br>Zone A<br><small>LOVE</small></button>
-      <button class="zone-pick" id="zp-B" onclick="pickZone('B')">😄<br>Zone B<br><small>LAUGH</small></button>
-      <button class="zone-pick" id="zp-C" onclick="pickZone('C')">🌿<br>Zone C<br><small>EXPLORE</small></button>
+    <div style="background:#FFF0EF;border:2px solid #E8312A;border-radius:14px;padding:10px 14px;text-align:center;margin-top:14px">
+      <div style="font-size:0.7rem;font-weight:900;letter-spacing:2px;color:#E8312A;text-transform:uppercase;margin-bottom:2px">Hunt Theme</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:#E8312A">❤️ LOVE</div>
+      <div style="font-size:0.75rem;font-weight:700;color:#888;margin-top:2px">Open to all participants 🎉</div>
     </div>
     <button class="start-btn" onclick="startGame()">Start Hunting! 🚀</button>
   </div>
@@ -953,8 +949,9 @@ const LEGO_FIGURES = {
 // ─────────────────────────────────────────────
 const ZONES = {
   A:{
-    name:'Zone A — LOVE', icon:'❤️', color:'#E8312A', bgGrad:'linear-gradient(135deg,#E8312A,#FF6B35)',
-    progressColor:'#E8312A', sub:'PCF Sparkletots · Find Lego pieces & complete the build!',
+    name:'❤️ LOVE — Building Blocks Hunt', icon:'❤️', color:'#E8312A',
+    bgGrad:'linear-gradient(135deg,#E8312A,#FF6B35)',
+    progressColor:'#E8312A', sub:'Open to all participants!',
     stations:[
       { title:'Station 1: Love Quiz', type:'quiz', emoji:'❤️',
         question:'What do we say to the people we love most?',
@@ -962,7 +959,7 @@ const ZONES = {
         hint:'Three special words that make hearts feel warm!', points:20 },
       { title:'Station 2: Family Hug!', type:'action', emoji:'🤗',
         question:'Give every family member a big hug right now!',
-        steps:['Find ALL your family members nearby 👨‍👩‍👧‍👦','Hold out your arms as wide as you can 🙌','Hug them ALL at once — group hug!','Shout: "I LOVE MY FAMILY!" together 💕'],
+        steps:['Find ALL your family members nearby 👨‍👩‍👧‍👦','Hold out your arms as wide as you can 🙌','Hug them ALL at once — group hug!','Shout: \"I LOVE MY FAMILY!\" together 💕'],
         points:20 },
       { title:'Station 3: 🧱 Find Lego #1', type:'lego', legoId:'A1', points:30 },
       { title:'Station 4: Kindness Challenge', type:'quiz', emoji:'🌸',
@@ -971,57 +968,9 @@ const ZONES = {
         hint:'What would YOU want someone to do for you?', points:20 },
       { title:'Station 5: Sharing Action', type:'action', emoji:'🍎',
         question:'Share something with someone near you!',
-        steps:['Find something you have — a snack, a toy, or a smile 😊','Find someone near you to share with','Share it with them and say: "This is for you!"','Watch their face light up! ✨'],
+        steps:['Find something you have — a snack, a toy, or a smile 😊','Find someone near you to share with','Share it with them and say: \"This is for you!\"','Watch their face light up! ✨'],
         points:20 },
       { title:'Station 6: 🧱 Find Lego #2', type:'lego', legoId:'A2', points:30 },
-    ]
-  },
-  B:{
-    name:'Zone B — LAUGH', icon:'😄', color:'#FF8C00', bgGrad:'linear-gradient(135deg,#FF8C00,#FFD700)',
-    progressColor:'#FF8C00', sub:'7Oaks & Star Learners · Find Lego pieces & complete the build!',
-    stations:[
-      { title:'Station 1: Joke Time!', type:'quiz', emoji:'😂',
-        question:'Why did the teddy bear say NO to dessert?',
-        options:['She was on a diet','She was STUFFED already! 🧸','She didn\'t like cake','She was sleeping'], answer:1,
-        hint:'What are teddy bears full of inside?', points:20 },
-      { title:'Station 2: Ha Ha Challenge', type:'action', emoji:'🤣',
-        question:'Do the LAUGHTER EXERCISE as a family!',
-        steps:['Stand in a circle holding hands 🤝','Take a BIG deep breath together','Breathe out laughing: HA HA HA HA HA! 😂','Do it 3 times — first one to laugh for real WINS! 🏆'],
-        points:20 },
-      { title:'Station 3: 🧱 Find Lego #3', type:'lego', legoId:'B1', points:30 },
-      { title:'Station 4: Silly Quiz', type:'quiz', emoji:'🤪',
-        question:'What makes a great day AMAZING?',
-        options:['Staying inside all day','No friends, no fun','Laughing with family & friends! 🎉','Doing homework all day'], answer:2,
-        hint:'Think about the times you\'ve felt the happiest!', points:20 },
-      { title:'Station 5: Funny Faces!', type:'action', emoji:'😜',
-        question:'Family funny faces competition!',
-        steps:['Everyone makes the SILLIEST face you can 🤪','Hold it for 5 seconds','Vote: who has the funniest face? 🏆','Winner does a silly dance! 💃'],
-        points:20 },
-      { title:'Station 6: 🧱 Find Lego #4', type:'lego', legoId:'B2', points:30 },
-    ]
-  },
-  C:{
-    name:'Zone C — EXPLORE', icon:'🌿', color:'#00A850', bgGrad:'linear-gradient(135deg,#00A850,#006CB7)',
-    progressColor:'#00A850', sub:'Zulfa & Little Footprints · Find Lego pieces & complete the build!',
-    stations:[
-      { title:'Station 1: Nature Quiz', type:'quiz', emoji:'🌳',
-        question:'What do plants need most to grow big and strong?',
-        options:['Candy & soda 🍬','Wi-Fi signal 📶','Sunlight, water & soil ☀️💧🌱','TV and video games'], answer:2,
-        hint:'Look around you — what is the garden full of?', points:20 },
-      { title:'Station 2: Explorer Search', type:'action', emoji:'🔍',
-        question:'Find 3 different things in nature around you!',
-        steps:['Spot something GREEN 🌿 — touch it!','Find something that MOVES or FLIES 🦋','Discover something that SMELLS nice 🌸','Show your family all 3 discoveries! 🎯'],
-        points:20 },
-      { title:'Station 3: 🧱 Find Lego #5', type:'lego', legoId:'C1', points:30 },
-      { title:'Station 4: Talent Quiz', type:'quiz', emoji:'⭐',
-        question:'Everyone has a superpower! What is YOUR talent?',
-        options:['I have no talent','Only adults have talents','A special gift that makes me unique! 🌟','Talent is only for famous people'], answer:2,
-        hint:'Think of something YOU are really good at or love doing!', points:20 },
-      { title:'Station 5: Superpower Show!', type:'action', emoji:'🦸',
-        question:'Show your family your superpower talent!',
-        steps:['Think of ONE thing you\'re good at 🤔','Could be singing, jumping, drawing, making faces...','Perform it for your family right now! 🎭','Family gives a big CHEER! 👏'],
-        points:20 },
-      { title:'Station 6: 🧱 Find Lego #6', type:'lego', legoId:'C2', points:30 },
     ]
   }
 };
@@ -1066,15 +1015,9 @@ function pickZone(z){
 function startGame(){
   const n=document.getElementById('playerName').value.trim();
   if(!n){alert('Please enter your name! 😊');return;}
-  if(!document.querySelector('.zone-pick.sel-a,.zone-pick.sel-b,.zone-pick.sel-c'))
-    {alert('Please pick your zone!');return;}
-  S.name=n; S.done=[]; S.score=0; S.legoFound=0;
-  showZone();
+  S.name=n;S.zone='A';S.done=[];S.score=0;S.lego=0;showZone();
 }
 
-// ─────────────────────────────────────────────
-//  ZONE HUB
-// ─────────────────────────────────────────────
 function showZone(){ stopCam();
   const zd=ZONES[S.zone];
   // Header
@@ -1342,9 +1285,7 @@ function showPtBurst(txt){
 //  STATION CODES
 // ─────────────────────────────────────────────
 const STATION_CODES = {
-  A:['SUNSHINE','RAINBOW','BRICKRED','KINDSTAR','TOGETHER','HEARTGOLD'],
-  B:['GIGGLE','HAHAHA','BRICKYELLOW','JOYFUL','CHUCKLE','SMILEBIG'],
-  C:['BUTTERFLY','DISCOVERY','BRICKGREEN','BLOSSOM','AWESOME','NATUREFUN']
+  A:['SUNSHINE','RAINBOW','BRICKRED','KINDSTAR','TOGETHER','HEARTGOLD']
 };
 
 let html5QrScanner = null;
@@ -1577,4 +1518,10 @@ function saveTicket(){
 
 </div>
 
-</body>
+</bodyfunction resetGame(){
+  S={name:'',zone:'A',done:[],score:0,lego:0,cur:0};
+  stopCam();
+  document.getElementById('playerName').value='';
+  show('screen-welcome');
+}
+>
