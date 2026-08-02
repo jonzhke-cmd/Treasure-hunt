@@ -1033,6 +1033,21 @@ function showZone(){ stopCam();
   document.getElementById('progressLabel').textContent=S.done.length+' of 5 stations completed';
   // Stations
   renderStations(zd);
+
+  // Show redeem button if all 5 done
+  const existingBtn = document.getElementById('redeemBanner');
+  if(existingBtn) existingBtn.remove();
+  if(S.done.length >= 5){
+    const banner = document.createElement('div');
+    banner.id = 'redeemBanner';
+    banner.style.cssText = 'width:100%;max-width:520px;margin-top:16px;background:linear-gradient(135deg,#E8312A,#FF6B35);border:3px solid #1C1C1E;border-radius:18px;padding:18px 20px;text-align:center;box-shadow:4px 4px 0 #1C1C1E;animation:brickPop 0.5s cubic-bezier(.34,1.56,.64,1);';
+    banner.innerHTML = '<div style="font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;margin-bottom:4px">🎡 All Stations Complete!</div>'
+      + '<div style="font-size:0.85rem;font-weight:800;color:rgba(255,255,255,0.85);margin-bottom:14px">You scored '+S.score+' points — claim your FREE SPIN now!</div>'
+      + '<button onclick="showFinish()" style="background:white;color:#E8312A;border:3px solid #1C1C1E;border-radius:14px;padding:14px 28px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;box-shadow:3px 3px 0 #1C1C1E;width:100%;touch-action:manipulation;">🎟️ Show My Ticket → Reward Station</button>';
+    const grid = document.getElementById('stationGrid');
+    grid.parentNode.insertBefore(banner, grid.nextSibling);
+  }
+
   show('screen-zone');
 }
 
@@ -1080,7 +1095,7 @@ function openStation(idx){
   const isLego = st.type === 'lego';
   const fig = isLego ? LEGO_FIGURES[S.zone].find(f=>f.id===st.legoId) : null;
 
-  document.getElementById('scanBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1} of 6`;
+  document.getElementById('scanBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1} of 5`;
   document.getElementById('scanBread').style.color = zd.color;
 
   if(isLego){
@@ -1120,7 +1135,7 @@ function showCompleted(idx){
     <div class="ch-body" style="text-align:center">
       <div style="font-size:4rem;margin:20px 0">✅</div>
       <p style="color:#16A34A;font-weight:900;font-size:1.1rem;margin-bottom:8px">Station completed!</p>
-      <p style="color:#888;font-size:0.85rem;font-weight:700">Head to the next station 👉</p>
+      <p style="color:#888;font-size:0.85rem;font-weight:700">Visit any remaining stations 🗺️</p>
       <button class="cta-btn" style="background:${zd.color};margin-top:20px" onclick="showZone()">Back to Map 🗺️</button>
     </div>`;
   show('screen-challenge');
@@ -1412,7 +1427,7 @@ function completeAndNext(){
     showPtBurst('+'+pts+' '+(st.type==='lego'?'🧱':'⭐'));
     spawnConf(st.type==='lego'?60:30);
   }
-  if(S.done.length >= 6){ setTimeout(showFinish, 600); }
+  if(S.done.length >= 5){ setTimeout(showFinish, 600); }
   else { showZone(); }
 }
 
