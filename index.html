@@ -1040,12 +1040,11 @@ function renderStations(zd){
   const grid=document.getElementById('stationGrid');
   grid.innerHTML='';
   const typeIcons={quiz:'🧠',action:'💪',lego:'🧱'};
-  const typeLabels={quiz:'Quiz Challenge',action:'Action Challenge',lego:'Lego Hunt'};
+  const typeLabels={quiz:'Quiz Challenge',action:'Family Challenge',lego:'Lego Hunt'};
   zd.stations.forEach((st,i)=>{
     const done=S.done.includes(i);
-    const locked=!done && i>0 && !S.done.includes(i-1);
     const el=document.createElement('div');
-    el.className='scard'+(done?' done':'')+(locked?' locked':'');
+    el.className='scard'+(done?' done':'');
     const isLego=st.type==='lego';
     el.innerHTML=`
       ${isLego?`<div class="lego-badge">🧱 Lego Hunt</div>`:''}
@@ -1054,9 +1053,9 @@ function renderStations(zd){
         <div class="scard-title">${st.title}</div>
         <div class="scard-type">${typeIcons[st.type]||'🎯'} ${typeLabels[st.type]||'Challenge'} · ${st.points} pts</div>
       </div>
-      <div class="scard-right">${done?'✅':locked?'🔒':'▶️'}</div>
+      <div class="scard-right">${done?'✅':'▶️'}</div>
     `;
-    if(!locked) el.onclick=()=>openStation(i);
+    el.onclick=()=>openStation(i);
     grid.appendChild(el);
   });
 }
