@@ -813,7 +813,7 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
 <div class="screen" id="screen-zone">
   <div class="zone-header" id="zoneHeader">
     <div class="zone-header-icon" id="zoneIcon">❤️</div>
-    <div class="zone-header-name" id="zoneName">Zone A — LOVE</div>
+    <div class="zone-header-name" id="zoneName">❤️ LOVE</div>
     <div class="zone-header-sub" id="zoneSub">Find all 6 Lego pieces &amp; complete the build!</div>
   </div>
   <div class="hub-score-row">
@@ -842,7 +842,7 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
   <div class="ch-topbar">
     <button class="back-btn" onclick="showZone()">← Back</button>
     <div>
-      <div class="ch-breadcrumb" id="chBread">Zone A · Station 1</div>
+      <div class="ch-breadcrumb" id="chBread">Station 1</div>
     </div>
   </div>
   <div class="progress-track" style="max-width:540px;width:100%;margin-bottom:16px">
@@ -906,7 +906,7 @@ const LEGO_FIGURES = {
       src:'',
       emoji:'💝',
       clue:'Find me near the PICNIC SHELTER — look under the bench! 🪑',
-      hiddenAt:'Picnic Shelter, Zone A',
+      hiddenAt:'Picnic Shelter',
       pieceNum:2
     },
   ],
@@ -1101,7 +1101,7 @@ function openStation(idx){
   const isLego = st.type === 'lego';
   const fig = isLego ? LEGO_FIGURES[S.zone].find(f=>f.id===st.legoId) : null;
 
-  document.getElementById('scanBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1} of 5`;
+  document.getElementById('scanBread').textContent = `❤️ LOVE · Station ${idx+1} of 5`;
   document.getElementById('scanBread').style.color = zd.color;
 
   if(isLego){
@@ -1128,7 +1128,7 @@ function showCompleted(idx){
   const zd = ZONES[S.zone];
   const st = zd.stations[idx];
   const card = document.getElementById('chCard');
-  document.getElementById('chBread').textContent = `${zd.icon} ${zd.name} · Station ${idx+1}`;
+  document.getElementById('chBread').textContent = `❤️ LOVE · Station ${idx+1}`;
   const p2 = document.getElementById('progressFill2');
   p2.style.width = ((S.done.length/5)*100)+'%';
   p2.style.background = zd.color;
@@ -1224,7 +1224,7 @@ function showFinish(){
   stopCam();
 
   const cfg = {
-    A:{icon:'❤️', zone:'Zone A', theme:'❤️ LOVE',  color:'#E8312A', stubGrad:'linear-gradient(160deg,#C41E3A,#8B1A1A)'},
+    A:{icon:'❤️', zone:'❤️ LOVE', theme:'❤️ LOVE',  color:'#E8312A', stubGrad:'linear-gradient(160deg,#C41E3A,#8B1A1A)'},
     B:{icon:'😄', zone:'Zone B', theme:'😄 LAUGH', color:'#FF8C00', stubGrad:'linear-gradient(160deg,#FF8C00,#CC6600)'},
     C:{icon:'🌿', zone:'Zone C', theme:'🌿 EXPLORE',color:'#00A850', stubGrad:'linear-gradient(160deg,#00A850,#005A30)'}
   };
@@ -1490,7 +1490,7 @@ function saveTicket(){
             <div class="vtk-holder-info">
               <div class="vtk-holder-lbl">Ticket Holder</div>
               <div class="vtk-holder-name" id="vtkName">Explorer</div>
-              <div class="vtk-holder-zone" id="vtkZone">Zone A · ❤️ LOVE</div>
+              <div class="vtk-holder-zone" id="vtkZone">❤️ LOVE</div>
             </div>
           </div>
         </div>
