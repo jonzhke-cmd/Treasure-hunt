@@ -1273,8 +1273,9 @@ function openStation(idx){
       `<span style="background:#FFFBEB;border:1px solid #FFD700;border-radius:8px;padding:6px 12px;font-size:0.82rem;color:#92400E;font-weight:800">🔍 Find it · Flip it · Scan the QR on the back!</span>`;
   } else {
     document.getElementById('scanTitle').textContent = '📋 Complete the Challenge!';
+    const stLocation = st.location ? `<div style="background:#FFF0EF;border:1px solid #E8312A;border-radius:8px;padding:5px 10px;margin-bottom:6px;font-size:0.8rem;font-weight:800;color:#E8312A;">📍 ${st.location}</div>` : '';
     document.getElementById('scanSub').innerHTML =
-      `<b>Go find your teacher at this station.</b><br>Complete their challenge or task,<br>then scan their QR code or enter the password to unlock!`;
+      stLocation + `<b>Go find your teacher at this station.</b><br>Complete their challenge or task,<br>then scan their QR code or enter the password to unlock!`;
   }
 
   document.getElementById('scanStatus').textContent = '📸 Point camera at QR code';
