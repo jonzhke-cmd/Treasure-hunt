@@ -1091,6 +1091,8 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
     <input class="code-input" id="codeInput" type="text" placeholder="e.g. SUNSHINE" maxlength="20"/>
     <button class="submit-code-btn" onclick="submitCode()">Unlock Station ➜</button>
   </div>
+  <!-- Fun Facts Section -->
+  <div id="funFactsBox" style="display:none;width:100%;max-width:340px;margin:14px auto 0;"></div>
   <button class="cancel-scan-btn" onclick="showZone()">← Back to Map</button>
 </div>
 
@@ -1354,6 +1356,7 @@ function openStation(idx){
   document.getElementById('scanStatus').textContent = '📸 Point camera at QR code';
   document.getElementById('scanStatus').className = 'scan-status';
   document.getElementById('codeInput').value = '';
+  showFunFacts(idx);
   show('screen-scanner');
   startCam();
 }
@@ -1832,6 +1835,84 @@ function resetGame(){
     document.head.appendChild(style);
   }
 })();
+
+
+const FUN_FACTS = {
+  0: {
+    icon:'🏺', title:"Did You Know? About Potter's Garden!",
+    color:'#E8312A', bg:'#FFF0EF', border:'#E8312A',
+    facts:[
+      "🐉 This garden is home to Singapore's <b>last two dragon kilns</b> — Thow Kwang Pottery Jungle & Jalan Bahar Clay Studios — still firing up today!",
+      "📅 The original Jurong Eco-Garden opened in <b>June 2014</b> and was renamed <b>The Potter's Garden</b> to honour the area's rich pottery heritage.",
+      "🏭 These dragon kilns continue to operate <b>without disruption</b>, keeping a centuries-old craft alive in the heart of Singapore!"
+    ]
+  },
+  1: {
+    icon:'🌿', title:'Did You Know? About This Green Space!',
+    color:'#00A850', bg:'#F0FFF4', border:'#00A850',
+    facts:[
+      "🌱 The park uses <b>biodiversity-sensitive design</b> — native plant species conserved and expanded to attract amazing local wildlife!",
+      "🦋 A <b>multi-tiered planting scheme</b> inspired by forest design creates natural pathways for animals to move freely across the district.",
+      "🐦 The carefully chosen plants help <b>native birds, insects and animals</b> thrive — creating a living, breathing urban forest right here!"
+    ]
+  },
+  2: {
+    icon:'💧', title:'Did You Know? About This Swamp!',
+    color:'#006CB7', bg:'#EFF8FF', border:'#006CB7',
+    facts:[
+      "🌊 This freshwater swamp is the <b>first of its kind in any industrial park</b> in Singapore — totally one of a kind!",
+      "♻️ About <b>65% of rainwater</b> collected here is filtered and reused for flushing toilets and watering plants — super eco-friendly!",
+      "🦅 Rare birds like the <b>Straw-headed Bulbul, Grey-headed Fish Eagle</b> and <b>Oriental Magpie-robin</b> have been spotted here — look out! 👀"
+    ]
+  },
+  3: {
+    icon:'🌳', title:'Did You Know? About This Park!',
+    color:'#FF8C00', bg:'#FFF8EF', border:'#FF8C00',
+    facts:[
+      "🌳 Over <b>400 brand new trees</b> were planted when the park was rejuvenated — giving more shade and beauty for everyone!",
+      "🛝 The park features <b>new playgrounds, fitness corners and upgraded footpaths</b> wide enough for cycling and active fun!",
+      "☀️ All those new trees mean you enjoy the park in <b>beautiful shade all day long</b> — nature's own air conditioning! 🌬️"
+    ]
+  },
+  4: {
+    icon:'🦋', title:'Did You Know? About Butterfly Garden!',
+    color:'#9B59B6', bg:'#F9F0FF', border:'#9B59B6',
+    facts:[
+      "🦋 After the park was completed, <b>15 new butterfly species</b> were recorded here that were never found before — incredible!",
+      "🌈 Rare beauties like the <b>Harlequin</b> and <b>Common Birdwing</b> butterfly live here — some are of conservation interest in Singapore!",
+      "🌺 Native plants like <b>Seashore Ardisia, Fishtail Palm and Gelam</b> were planted to attract and feed these stunning butterflies!"
+    ]
+  }
+};
+
+function showFunFacts(stationIdx){
+  const box = document.getElementById('funFactsBox');
+  if(!box) return;
+  const f = FUN_FACTS[stationIdx];
+  if(!f){ box.style.display='none'; return; }
+  box.style.display = 'block';
+  box.innerHTML = `
+    <div style="background:${f.bg};border:2.5px solid ${f.border};border-radius:16px;overflow:hidden;box-shadow:3px 3px 0 rgba(0,0,0,0.12);">
+      <!-- Header -->
+      <div style="background:${f.border};padding:10px 14px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:1.4rem;">${f.icon}</span>
+        <div>
+          <div style="font-family:'Fredoka One',cursive;font-size:0.95rem;color:white;line-height:1.2;">${f.title}</div>
+          <div style="font-size:0.65rem;font-weight:800;color:rgba(255,255,255,0.75);letter-spacing:1px;text-transform:uppercase;">Fun Facts · Learn While You Play!</div>
+        </div>
+      </div>
+      <!-- Facts -->
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
+        ${f.facts.map((fact,i) => `
+          <div style="display:flex;gap:8px;align-items:flex-start;background:white;border-radius:10px;padding:8px 10px;border-left:3px solid ${f.border};">
+            <div style="font-family:'Fredoka One',cursive;font-size:0.75rem;color:white;background:${f.border};border-radius:50%;width:20px;height:20px;min-width:20px;display:flex;align-items:center;justify-content:center;">${i+1}</div>
+            <div style="font-size:0.8rem;font-weight:700;color:#333;line-height:1.45;">${fact}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
 
 </script>
 </body>
