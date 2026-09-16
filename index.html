@@ -1054,7 +1054,7 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
     </div>
     <div class="hub-score-card">
       <div class="hub-score-label">Lego Pieces</div>
-      <div class="hub-score-val" id="hubLego">0🧱</div>
+      <div class="hub-score-val" id="hubLego">0/2</div>
     </div>
   </div>
   <div class="progress-track">
@@ -1264,7 +1264,7 @@ function showZone(){ stopCam();
   // Stats
   document.getElementById('hubPoints').textContent=S.score;
   document.getElementById('hubStations').textContent=S.done.length+'/5';
-  document.getElementById('hubLego').textContent=S.legoFound+'🧱';
+  document.getElementById('hubLego').textContent=(S.legoFound||0)+'/2';
   // Progress
   const pct=(S.done.length/5)*100;
   document.getElementById('progressFill').style.width=pct+'%';
