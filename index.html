@@ -970,7 +970,7 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
           <div style="width:28px;height:28px;min-width:28px;background:#1C1C1E;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:0.9rem;color:white;flex-shrink:0;">4</div>
           <div>
             <div style="font-family:'Fredoka One',cursive;font-size:0.9rem;color:#1C1C1E;">🧱 Lego Hunt · Playground</div>
-            <div style="font-size:0.75rem;font-weight:700;color:#888;margin-top:2px;">Hunt for the Lego figure hidden somewhere at the Playground — explore the play equipment and look carefully! 🛝</div>
+            <div style="font-size:0.75rem;font-weight:700;color:#888;margin-top:2px;">Find the Lego figure hidden at the Playground 🛝. Take a photo 📸 with it and show your teacher — they will give you the password!</div>
           </div>
         </div>
 
@@ -1124,7 +1124,7 @@ const LEGO_FIGURES = {
       id:'A1', name:'Red Builder Bob', color:'#E8312A',
       src:'', // upload your image here
       emoji:'🧱',
-      clue:'I am hidden SOMEWHERE in the big Fitness Corner — explore the equipment and look carefully! 🏋️',
+      clue:'I am hidden SOMEWHERE in the Fitness Corner 🏋️ — find me, take a PHOTO 📸 and show your teacher to get the password!',
       hiddenAt:'Fitness Corner (search around the equipment)',
       pieceNum:1
     },
@@ -1132,7 +1132,7 @@ const LEGO_FIGURES = {
       id:'A2', name:'Love Heart Lily', color:'#FF6B9D',
       src:'',
       emoji:'💝',
-      clue:'I am hidden SOMEWHERE at the PLAYGROUND — explore the play equipment and look around carefully! 🛝',
+      clue:'I am hidden SOMEWHERE at the Playground 🛝 — find me, take a PHOTO 📸 and show your teacher to get the password!',
       hiddenAt:'Playground area',
       pieceNum:2
     },
@@ -1343,7 +1343,7 @@ function openStation(idx){
       `<b style="color:${zd.color}">${fig ? fig.name : 'Hidden Lego'}</b><br>` +
       `${fig ? fig.clue : 'Look around carefully!'}<br>` +
       `<span style="color:#aaa;font-size:0.8rem">📍 ${fig ? fig.hiddenAt : ''}</span><br><br>` +
-      `<span style="background:#FFFBEB;border:1px solid #FFD700;border-radius:8px;padding:6px 12px;font-size:0.82rem;color:#92400E;font-weight:800">🔍 Find it · Flip it · Scan the QR on the back!</span>`;
+      `<span style="background:#FFFBEB;border:1px solid #FFD700;border-radius:8px;padding:8px 14px;font-size:0.82rem;color:#92400E;font-weight:800;display:block;line-height:1.6;">📸 Found it? Take a PHOTO with the Lego figure!<br>Show the photo to your teacher → get the password → enter it below!</span>`;
   } else {
     document.getElementById('scanTitle').textContent = '📋 Complete the Challenge!';
     const stLocation = st.location ? `<div style="background:#FFF0EF;border:1px solid #E8312A;border-radius:8px;padding:5px 10px;margin-bottom:6px;font-size:0.8rem;font-weight:800;color:#E8312A;">📍 ${st.location}</div>` : '';
