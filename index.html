@@ -1062,6 +1062,27 @@ var __Html5QrcodeLibrary__;(()=>{var t={449:function(t,e,r){!function(t){"use st
   </div>
   <p class="progress-label" id="progressLabel">0 of 5 stations completed</p>
   <div class="station-grid" id="stationGrid"></div>
+
+  <!-- Quick Access Buttons -->
+  <div style="display:flex;gap:10px;width:100%;max-width:520px;margin-top:16px;">
+    <button onclick="openInGame('screen-map')" style="
+      flex:1;padding:12px 8px;
+      background:linear-gradient(135deg,#5C2D0A,#8B4513);
+      color:#FFD700;border:2.5px solid #1C1C1E;border-radius:14px;
+      font-family:'Fredoka One',cursive;font-size:0.9rem;
+      cursor:pointer;box-shadow:0 3px 0 #3D1C02;
+      touch-action:manipulation;
+    ">🗺️ Treasure Map</button>
+    <button onclick="openInGame('screen-rules')" style="
+      flex:1;padding:12px 8px;
+      background:white;color:#E8312A;
+      border:2.5px solid #E8312A;border-radius:14px;
+      font-family:'Fredoka One',cursive;font-size:0.9rem;
+      cursor:pointer;box-shadow:0 3px 0 rgba(232,49,42,0.3);
+      touch-action:manipulation;
+    ">📖 How to Play</button>
+  </div>
+
 </div>
 
 <!-- ══════════ CHALLENGE ══════════ -->
@@ -1245,6 +1266,21 @@ function pickZone(z){
 }
 
 function showRules(){ show('screen-rules'); }
+
+// Open map or rules from inside the game — back button returns to zone hub
+function openInGame(screenId){
+  // Temporarily override the back button on map/rules screens to return to zone
+  const target = document.getElementById(screenId);
+  if(!target) return;
+
+  // Update back buttons on map and rules to go back to zone
+  const backBtns = target.querySelectorAll('button[onclick*="screen-welcome"]');
+  backBtns.forEach(btn => {
+    btn.setAttribute('onclick', 'showZone()');
+    btn.textContent = '← Back to Game';
+  });
+  show(screenId);
+}
 function showMap(){ show('screen-map'); }
 
 function startGame(){
